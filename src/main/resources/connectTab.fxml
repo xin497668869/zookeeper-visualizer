@@ -6,6 +6,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -20,19 +21,26 @@
             <BorderPane>
                 <top>
                     <SearchTextField fx:id="searchZkNodeTextField" promptText="Search" BorderPane.alignment="CENTER">
-                    </SearchTextField >
+                    </SearchTextField>
                 </top>
                 <center>
-                    <ZkTreeView fx:id="zkTreeView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                    <ZkTreeView fx:id="zkTreeView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
                 </center>
             </BorderPane>
             <VBox prefHeight="200.0" prefWidth="100.0">
-                <TextField editable="false" fx:id="zkPathTextField"/>
                 <BorderPane>
                     <left>
-                        <Label prefHeight="15.0" prefWidth="59.0" text="节点信息:" BorderPane.alignment="CENTER"   >
+                        <Label text=" path:   " BorderPane.alignment="CENTER"/>
+                    </left>
+                    <center>
+                        <TextField editable="false" fx:id="zkPathTextField"/>
+                    </center>
+                </BorderPane>
+                <BorderPane>
+                    <left>
+                        <Label prefHeight="15.0" prefWidth="59.0" text="节点信息:" BorderPane.alignment="CENTER">
                             <BorderPane.margin>
-                                <Insets bottom="2" left="1" top="5" />
+                                <Insets bottom="2" left="1" top="5"/>
                             </BorderPane.margin>
                         </Label>
                     </left>
@@ -40,23 +48,26 @@
                 <TextArea fx:id="zkNodeStatTextArea" styleClass="textAreaLikeLabel" editable="false"
                           prefHeight="180.0" prefWidth="200.0" maxHeight="180.0" minHeight="180.0"
                           text="" wrapText="true"/>
-
-                <TextArea  prefHeight="999999.0" fx:id="zkNodeDataTextArea"/>
-                <HBox >
+                <Separator prefHeight="78.0" prefWidth="516.0"/>
+                <Label text="value:"></Label>
+                <TextArea prefHeight="999999.0" fx:id="zkNodeDataTextArea"/>
+                <HBox>
                     <children>
-                        <Button  fx:id="saveNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="85.0" text="保存修改">
+                        <Button fx:id="saveNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="85.0"
+                                text="保存修改">
                             <HBox.margin>
-                                <Insets left="10.0" right="10.0" />
+                                <Insets left="10.0" right="10.0"/>
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="reloadNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="87.0" text="重新读取">
+                        <Button fx:id="reloadNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="87.0"
+                                text="重新读取">
                             <HBox.margin>
-                                <Insets left="10.0" right="10.0" />
+                                <Insets left="10.0" right="10.0"/>
                             </HBox.margin>
                         </Button>
                     </children>
                     <padding>
-                        <Insets bottom="5.0" top="5.0" />
+                        <Insets bottom="5.0" top="5.0"/>
                     </padding>
                 </HBox>
             </VBox>
