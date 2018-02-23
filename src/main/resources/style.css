@@ -1,0 +1,33 @@
+
+.textAreaLikeLabel {
+    -fx-padding: 0;
+    -fx-cursor: default;
+    -fx-background-color: RGB(244,244,244);
+
+}
+.textAreaLikeLabel > .scroll-pane {
+    -fx-background-color: null;
+}
+.textAreaLikeLabel > .scroll-pane > .scroll-bar:horizontal {
+    -fx-background-radius: 0 0 2 2;
+}
+.textAreaLikeLabel > .scroll-pane > .scroll-bar:vertical {
+    -fx-background-radius: 0 2 2 0;
+}
+.textAreaLikeLabel > .scroll-pane > .corner {
+    -fx-background-radius: 0 0 2 0;
+}
+.textAreaLikeLabel .content {
+    /*the is 1px less top and bottom than TextInput because of scrollpane border */
+    -fx-padding: 0.25em 0.583em 0.25em 0.583em; /* 3 7 3 7 */
+    -fx-cursor: text;
+    -fx-background-color: RGB(244,244,244);
+    -fx-background-radius: 2;
+}
+.textAreaLikeLabel:focused .content {
+    -fx-padding: 0.25em 0.583em 0.25em 0.583em; /* 3 7 3 7 */
+    -fx-cursor: text;
+    -fx-background-color:
+            RGB(244,244,244);
+    -fx-background-radius: 2;
+}
