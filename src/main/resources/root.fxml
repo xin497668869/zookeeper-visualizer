@@ -2,7 +2,12 @@
 
 <?import com.xin.view.SearchTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -10,6 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.HyperlinkLabel?>
 <BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.xin.controller.RootController">
     <center>
@@ -38,8 +44,13 @@
                     <center>
                         <TabPane fx:id="connectTabPane" prefHeight="200.0" prefWidth="200.0"
                                  tabClosingPolicy="UNAVAILABLE">
-                            <tabs>
-                            </tabs>
+                                <Tab text="介绍页">
+                                    <BorderPane>
+                                        <center>
+                                            <HyperlinkLabel style="-fx-font-size: 15px" fx:id="welcomeInfo" text="zookeeper-visualizer是zookeeper的可视化管理工具"></HyperlinkLabel>
+                                        </center>
+                                    </BorderPane>
+                                </Tab>
                         </TabPane>
                     </center>
                 </BorderPane>

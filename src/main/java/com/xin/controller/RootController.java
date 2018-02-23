@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -21,10 +22,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.commons.io.IOUtils;
+import org.controlsfx.control.HyperlinkLabel;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -33,6 +39,7 @@ import java.util.function.Predicate;
  * @author linxixin@cvte.com
  * @since 1.0
  */
+@Slf4j
 public class RootController implements Initializable {
 
     /**
@@ -41,12 +48,21 @@ public class RootController implements Initializable {
     public ListView<ConfUtil.Conf> confListView;
     public TextField               filterTextField;
     public TabPane                 connectTabPane;
-
+    public HyperlinkLabel          welcomeInfo;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         try {
+            welcomeInfo.setText(IOUtils.toString(RootController.class.getClassLoader().getResource("welcomeInfo.txt").toURI(), StandardCharsets.UTF_8));
+            welcomeInfo.setOnAction(event -> {
+                Hyperlink link = (Hyperlink) event.getSource();
+                final String str = link.getText();
+                try {
+                    java.awt.Desktop.getDesktop().browse(new URI(str));
+                } catch (Exception e) {
+                    log.error("打开github网页失败", e);
+                }
+            });
             confListView.setItems(FXCollections.observableArrayList(ConfUtil.load()));
             ContextMenu cm = getContextMenu();
             confListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -148,7 +164,7 @@ public class RootController implements Initializable {
                 TextField idTextField = (TextField) root.lookup("#idTextField");
                 idTextField.setText(selectedItem.getId());
                 stage.setTitle("zk配置修改");
-            } else{
+            } else {
                 stage.setTitle("zk配置新增");
             }
             stage.initModality(Modality.APPLICATION_MODAL);
