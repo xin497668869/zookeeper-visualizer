@@ -1,14 +1,19 @@
 # zookeeper-visualizer
 zookeeper的可视化管理工具
 
+## 简介
+
 zookeeper-visualizer是zookeeper的可视化管理工具, 用Java8编写, 使用JAVAFX 2.0进行ui设计
 
 
 ![image](https://raw.githubusercontent.com/xin497668869/zookeeper-visualizer/master/docs/readme1.jpg)
 
+## 环境
+
+- jdk 1.8.0_60+
 
 
-功能:
+## 功能
 
 1. 树形箭头往下即可监听对应节点
 
