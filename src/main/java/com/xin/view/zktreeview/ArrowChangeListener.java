@@ -1,11 +1,10 @@
 package com.xin.view.zktreeview;
 
 import com.xin.ZkClientWithUi;
-import com.xin.ZkNode;
+import com.xin.view.FilterableTreeItem;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 
@@ -18,11 +17,11 @@ import java.util.List;
 @Slf4j
 public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildListener {
 
-    private final ZkClientWithUi   zkClientWithUi;
-    private final TreeItem<ZkNode> zkNodeTreeItem;
-    private final ZkTreeView       zkTreeView;
+    private final ZkClientWithUi     zkClientWithUi;
+    private final FilterableTreeItem zkNodeTreeItem;
+    private final ZkTreeView         zkTreeView;
 
-    public ArrowChangeListener(ZkClientWithUi zkClientWithUi, TreeItem<ZkNode> zkNodeTreeItem, ZkTreeView zkTreeView) {
+    public ArrowChangeListener(ZkClientWithUi zkClientWithUi, FilterableTreeItem zkNodeTreeItem, ZkTreeView zkTreeView) {
         this.zkClientWithUi = zkClientWithUi;
         this.zkNodeTreeItem = zkNodeTreeItem;
         this.zkTreeView = zkTreeView;
@@ -33,7 +32,6 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
         List<String> currentChilds = zkClientWithUi.getChildren(zkNodeTreeItem.getValue().getPath());
         zkTreeView.refreshByParent(zkNodeTreeItem, currentChilds);
         zkTreeView.refresh();
-
     }
 
     @Override

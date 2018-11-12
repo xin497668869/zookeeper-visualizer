@@ -3,12 +3,17 @@ package com.xin.view.zktreeview;
 import com.xin.ZkClientWithUi;
 import com.xin.ZkNode;
 import com.xin.controller.NodeAddController;
+import com.xin.util.match.FList;
+import com.xin.util.match.MinusculeMatcher;
+import com.xin.util.match.TextRange;
+import com.xin.view.FilterableTreeItem;
 import com.xin.view.SearchTextField;
 import com.xin.view.TreeCellSkin;
 import javafx.event.ActionEvent;
 import javafx.event.EventDispatcher;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -59,17 +64,19 @@ import static javafx.scene.input.MouseEvent.MOUSE_PRESSED;
 @Slf4j
 public class ZkTreeView extends TreeView<ZkNode> {
 
-    private ZkClientWithUi zkClientWithUi;
-    private ZkNode                    root               = new ZkNode("/", "/");
-    private TreeItem<ZkNode>          rootZkNodeTreeItem = new TreeItem<>(root);
-    private EventHandler<ActionEvent> deleteNodeAction   = getDeleteNodeAction();
-    private EventHandler<ActionEvent> addNodeAction      = getAddNodeAction();
+    private ZkClientWithUi                 zkClientWithUi;
+    private ZkNode                         root               = new ZkNode("/", "/");
+    private FilterableTreeItem             rootZkNodeTreeItem = new FilterableTreeItem(root);
+    private EventHandler<ActionEvent>      deleteNodeAction   = getDeleteNodeAction();
+    private EventHandler<ActionEvent>      addNodeAction      = getAddNodeAction();
     private ChangeSelectDataChangeListener selectToDataChangeListener;
     private SearchTextField                searchZkNodeTextField;
 
     private void resetBySearch(String text) {
         resetBySearch(root, text);
+        rootZkNodeTreeItem.refilter();
         refresh();
+
     }
 
     public boolean isMatchSearch(ZkNode parent, String text) {
@@ -87,18 +94,37 @@ public class ZkTreeView extends TreeView<ZkNode> {
         return false;
     }
 
+    public void isMatch(ZkNode zkNode, ZkNode parent, String text) {
+        zkNode.setParent(parent);
+        if (text == null || text.isEmpty()) {
+            zkNode.setHighLight(true);
+            zkNode.setMatchSegments(FList.emptyList());
+        } else {
+            MinusculeMatcher minusculeMatcher = new MinusculeMatcher(text, MinusculeMatcher.MatchingCaseSensitivity.NONE, "");
+            FList<TextRange> textRanges = minusculeMatcher.matchingFragments(zkNode.getName());
+            if (textRanges != null && !textRanges.isEmpty()) {
+                zkNode.setMatchSegments(textRanges);
+                zkNode.setHighLight(true);
+                ZkNode parentZkNode = zkNode.getParent();
+                while (parentZkNode != null) {
+                    parentZkNode.setHighLight(true);
+                    parentZkNode = parentZkNode.getParent();
+                }
+            } else {
+                zkNode.setHighLight(false);
+                zkNode.setMatchSegments(FList.emptyList());
+            }
+        }
+    }
+
     private void resetBySearch(ZkNode parent, String text) {
+
         if (parent.getChildren() == null) {
             return;
         }
+
         for (ZkNode zkNode : parent.getChildren()) {
-            if (text == null || text.isEmpty()) {
-                zkNode.setHighLight(false);
-            } else if (zkNode.getName().toLowerCase().contains(text.toLowerCase())) {
-                zkNode.setHighLight(true);
-            } else {
-                zkNode.setHighLight(false);
-            }
+            isMatch(zkNode, parent, text);
             resetBySearch(zkNode, text);
         }
     }
@@ -120,14 +146,23 @@ public class ZkTreeView extends TreeView<ZkNode> {
             public TreeCell<ZkNode> call(TreeView<ZkNode> param) {
                 return new TreeCell<ZkNode>() {
 
-                    private TextFlow buildTextFlow(String text, String filter) {
-                        int filterIndex = text.toLowerCase().indexOf(filter.toLowerCase());
-                        Text textBefore = new Text(text.substring(0, filterIndex));
-                        Text textAfter = new Text(text.substring(filterIndex + filter.length()));
-                        Text textFilter = new Text(text.substring(filterIndex, filterIndex + filter.length()));
-                        textFilter.setFill(Color.ORANGE);
-                        textFilter.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
-                        return new TextFlow(textBefore, textFilter, textAfter);
+                    private TextFlow buildTextFlow(FList<TextRange> matchSegments, String text) {
+                        List<Text> texts = new ArrayList<>();
+                        int start = 0;
+                        for (TextRange matchSegment : matchSegments) {
+                            if (start < matchSegment.getStartOffset()) {
+                                texts.add(new Text(text.substring(start, matchSegment.getStartOffset())));
+                            }
+                            Text hightLight = new Text(text.substring(matchSegment.getStartOffset(), matchSegment.getEndOffset()));
+                            hightLight.setFill(Color.ORANGE);
+                            hightLight.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
+                            texts.add(hightLight);
+                            start = matchSegment.getEndOffset();
+                        }
+                        if (start < text.length()) {
+                            texts.add(new Text(text.substring(start)));
+                        }
+                        return new TextFlow(texts.toArray(new Node[texts.size()]));
                     }
 
                     @Override
@@ -139,9 +174,9 @@ public class ZkTreeView extends TreeView<ZkNode> {
                             setGraphic(null);
                             addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         } else {
-                            if (item.isHighLight()) {
+                            if (item.isHighLight() && !item.getMatchSegments().isEmpty()) {
                                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                                setGraphic(buildTextFlow(item.getName(), searchZkNodeTextField.getText()));
+                                setGraphic(buildTextFlow(item.getMatchSegments(), item.getName()));
                                 setText(null);
                             } else {
                                 setContentDisplay(ContentDisplay.TEXT_ONLY);
@@ -285,7 +320,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
      *
      * @param rootZkNodeTreeItem
      */
-    private void initRootItem(TreeItem<ZkNode> rootZkNodeTreeItem) {
+    private void initRootItem(FilterableTreeItem rootZkNodeTreeItem) {
         setRoot(rootZkNodeTreeItem);
         ArrowChangeListener listener = new ArrowChangeListener(zkClientWithUi, rootZkNodeTreeItem, this);
         rootZkNodeTreeItem.expandedProperty().addListener(listener);
@@ -299,7 +334,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
      * @param zkNodeTreeItem
      * @param children
      */
-    synchronized void refreshByParent(TreeItem<ZkNode> zkNodeTreeItem, List<String> children) {
+    synchronized void refreshByParent(FilterableTreeItem zkNodeTreeItem, List<String> children) {
         log.info(zkNodeTreeItem.getValue().getPath() + " 这个节点有变化");
 
         List<String> newChildren = new ArrayList<>(children);
@@ -327,16 +362,17 @@ public class ZkTreeView extends TreeView<ZkNode> {
             }
             ZkNode childNode = new ZkNode(path, childName);
             zkNode.addChild(childNode);
+            isMatch(childNode, zkNode, searchZkNodeTextField.getText());
 
-            TreeItem<ZkNode> treeItem = new TreeItem<>(childNode);
+            FilterableTreeItem treeItem = new FilterableTreeItem(childNode);
             treeItem.expandedProperty().addListener(new ArrowChangeListener(zkClientWithUi, treeItem, this));
 
-            zkNodeTreeItem.getChildren().add(treeItem);
+            zkNodeTreeItem.getInternalChildren().add(treeItem);
         }
         /**
          * 保证和zk里面的排序是一样的
          */
-        zkNodeTreeItem.getChildren().sort(Comparator.comparing(zkNodeTreeItem1 -> children.indexOf(zkNodeTreeItem1.getValue().getName())));
+        zkNodeTreeItem.getInternalChildren().sort(Comparator.comparing(zkNodeTreeItem1 -> children.indexOf(zkNodeTreeItem1.getValue().getName())));
     }
 
     private void removeTreeItem(TreeItem<ZkNode> zkNodeTreeItem, String nodeName) {
@@ -364,12 +400,12 @@ public class ZkTreeView extends TreeView<ZkNode> {
 
             Map<String, Set<IZkChildListener>> childListener = zkClientWithUi.getZkClient().getChildListener();
             String path = nodeTreeItem.getValue().getPath();
-            if(childListener.containsKey(path)) {
+            if (childListener.containsKey(path)) {
                 childListener.get(path).clear();
             }
 
             Map<String, Set<IZkDataListener>> dataListener = zkClientWithUi.getZkClient().getDataListener();
-            if(dataListener.containsKey(path)) {
+            if (dataListener.containsKey(path)) {
                 dataListener.get(path).clear();
             }
 
