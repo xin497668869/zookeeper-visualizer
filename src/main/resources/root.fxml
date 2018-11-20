@@ -2,22 +2,31 @@
 
 <?import com.xin.view.SearchTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.HyperlinkLabel?>
-<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.xin.controller.RootController">
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="文件">
+                    <MenuItem text="导入连接" fx:id="importBtn" onAction="#importBtnAction"/>
+                    <MenuItem text="导出连接" fx:id="exportBtn" onAction="#exportBtnAction"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="退出" fx:id="exitBtn" onAction="#exitBtnAction"/>
+                </Menu>
+                <Menu text="编辑">
+                    <MenuItem text="新建连接" fx:id="newConnBtn" onAction="#newConnBtnAction"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="新建节点" fx:id="newNodeBtn" onAction="#newNodeBtnAction"/>
+                </Menu>
+                <Menu text="关于" fx:id="aboutBtn" onAction="#aboutBtnAction"/>
+            </MenuBar>
+        </VBox>
+    </top>
     <center>
         <SplitPane dividerPositions="0.2" focusTraversable="" nodeOrientation="LEFT_TO_RIGHT" prefHeight="549.0"
                    prefWidth="1001.0">
@@ -30,16 +39,17 @@
                     </center>
                     <top>
                         <VBox alignment="CENTER">
-                            <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="124.0" text="创建连接"
+                            <!--<Button mnemonicParsing="false" prefHeight="23.0" prefWidth="124.0" text="创建连接"
                                     BorderPane.alignment="CENTER" onMouseClicked="#onClickToCreateConf">
                                 <BorderPane.margin>
                                     <Insets bottom="3.0" top="3.0"/>
                                 </BorderPane.margin>
-                            </Button>
+                            </Button>-->
                             <SearchTextField fx:id="filterTextField" promptText="Search" BorderPane.alignment="CENTER"/>
                         </VBox>
                     </top>
                 </BorderPane>
+
                 <BorderPane>
                     <center>
                         <TabPane fx:id="connectTabPane" prefHeight="200.0" prefWidth="200.0"

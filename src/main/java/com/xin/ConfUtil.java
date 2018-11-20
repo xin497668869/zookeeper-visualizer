@@ -7,10 +7,7 @@ import javafx.scene.control.ListView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +21,7 @@ public class ConfUtil {
 
     @Data
     @NoArgsConstructor
-    public static class Conf {
+    public static class Conf implements Serializable {
         private String id;
         private String name;
         private String address;
@@ -60,7 +57,6 @@ public class ConfUtil {
 
         @Override
         public int hashCode() {
-
             return Objects.hash(super.hashCode(), id);
         }
     }
@@ -84,6 +80,12 @@ public class ConfUtil {
         confListView.getItems().add(conf);
         confListView.refresh();
         return 1;
+    }
+
+    public static void reloadList(List<Conf> list) {
+        confs.clear();
+        confs = list;
+        save();
     }
 
     public static void removeConf(Conf conf, ListView<Conf> confListView) {

@@ -5,9 +5,9 @@ package com.xin; /**
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,15 +23,18 @@ public class ZookeeperVisualizer extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/root.fxml"));
+            BorderPane root = FXMLLoader.load(getClass().getResource("/root.fxml"));
 
             primaryStage.setTitle("zookeeper-visualizer");
             primaryStage.getIcons().add(new Image(ZookeeperVisualizer.class.getClassLoader().getResourceAsStream("icons/root.png")));
             Scene scene = new Scene(root);
+
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
 }
