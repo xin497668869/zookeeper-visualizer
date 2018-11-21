@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.HyperlinkLabel;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -153,7 +155,7 @@ public class RootController implements Initializable {
         System.out.println("importBtnAction...");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+//        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         File file = fileChooser.showOpenDialog(new Stage());
         if (file == null) {
             return;
@@ -162,10 +164,8 @@ public class RootController implements Initializable {
             StringBuilder sb = new StringBuilder();
             FileReader fr = new FileReader(file);
             new BufferedReader(fr).lines().filter(l -> l != null && !l.isEmpty()).forEachOrdered(sb::append);
-            String str = sb.toString();
-            //TODO 解析异常处理
-            List<ConfUtil.Conf> list = (List<ConfUtil.Conf>) JSON.parseObject(str, List.class);
-
+            String str = new String(new BASE64Decoder().decodeBuffer(sb.toString()));
+            List<ConfUtil.Conf> list = JSON.parseArray(str, ConfUtil.Conf.class);
             confListView.setItems(FXCollections.observableArrayList(list));
             ConfUtil.reloadList(list);
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public class RootController implements Initializable {
         }
         try {
             FileWriter fw = new FileWriter(file);
-            fw.write(JSON.toJSONString(ConfUtil.load()));
+            fw.write(new BASE64Encoder().encode(JSON.toJSONString(ConfUtil.load()).getBytes()));
             fw.flush();
             fw.close();
         } catch (Exception e) {
