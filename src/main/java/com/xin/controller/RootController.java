@@ -15,7 +15,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
@@ -52,6 +54,7 @@ public class RootController implements Initializable {
     public MenuItem aboutBtn;
 
     private AboutDialog aboutDialog = new AboutDialog();
+
     /**
      * 配置列表
      */
@@ -218,6 +221,23 @@ public class RootController implements Initializable {
 
     public void expandAllNodeBtnAction() {
         System.out.println("expandAllNodeBtnAction...");
+
+        Tab tab = connectTabPane.getSelectionModel().getSelectedItem();
+        if (tab instanceof ZkTab) {
+            ZkTab zkTab = (ZkTab) tab;
+            //zkTab.getConf();
+
+            //TODO
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("未打开任何连接！");
+            alert.initModality(Modality.WINDOW_MODAL);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("");
+            alert.showAndWait();
+        }
+        System.out.println("selected Tab: " + tab.getText());
+
     }
 
     public void closeAllNodeBtnAction() {
