@@ -3,6 +3,7 @@ package com.xin.controller;
 import com.alibaba.fastjson.JSON;
 import com.xin.ConfUtil;
 import com.xin.service.ConfService;
+import com.xin.view.AboutDialog;
 import com.xin.view.ProgressDialog;
 import com.xin.view.tab.ZkTab;
 import javafx.application.Platform;
@@ -46,9 +47,11 @@ public class RootController implements Initializable {
     public MenuItem exportBtn;
     public MenuItem exitBtn;
     public MenuItem newConnBtn;
-    public MenuItem newNodeBtn;
+    public MenuItem expandAllNodeBtn;
+    public MenuItem closeAllNodeBtn;
     public MenuItem aboutBtn;
 
+    private AboutDialog aboutDialog = new AboutDialog();
     /**
      * 配置列表
      */
@@ -75,6 +78,13 @@ public class RootController implements Initializable {
 
             confListView.setItems(FXCollections.observableArrayList(ConfUtil.load()));
             confListView.setOnMouseClicked(mouseEvent -> {
+                System.out.println(" confListView.mouseEvent " + mouseEvent);
+
+                if (mouseEvent.getEventType().getName().equalsIgnoreCase(MouseEvent.MOUSE_CLICKED.getName())) {
+                    expandAllNodeBtn.setDisable(false);
+                    closeAllNodeBtn.setDisable(false);
+                }
+
                 if (mouseEvent.getClickCount() == 2) {
                     ConfUtil.Conf selectedItem = confListView.getSelectionModel().getSelectedItem();
 
@@ -89,12 +99,12 @@ public class RootController implements Initializable {
                             connectTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.SELECTED_TAB);
                             connectTabPane.getTabs().add(tab);
                             connectTabPane.getSelectionModel().select(tab);
-
                         }
                     });
                     progressDialog.showAndWait();
                 }
             });
+
 
             confListView.setCellFactory(new Callback<ListView<ConfUtil.Conf>, ListCell<ConfUtil.Conf>>() {
                 @Override
@@ -132,6 +142,12 @@ public class RootController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Label menuLabel = new Label("关于");
+        menuLabel.setOnMouseClicked(event -> {
+            aboutBtnAction();
+        });
+        aboutBtn.setGraphic(menuLabel);
     }
 
     private ContextMenu getContextMenu() {
@@ -152,7 +168,6 @@ public class RootController implements Initializable {
     }
 
     public void importBtnAction() {
-        System.out.println("importBtnAction...");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
 //        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -172,11 +187,9 @@ public class RootController implements Initializable {
             log.warn("导入配置异常：", e);
         }
         System.out.println(file);
-
     }
 
     public void exportBtnAction() {
-        System.out.println("exportBtnAction...");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Resource File");
         fileChooser.setInitialFileName("connections.conf");
@@ -196,21 +209,26 @@ public class RootController implements Initializable {
     }
 
     public void exitBtnAction() {
-        System.out.println("exitBtnAction...");
         Platform.exit();
     }
 
     public void newConnBtnAction() {
-        System.out.println("newConnBtnAction...");
         ConfService.getService().saveConf(null, confListView);
     }
 
-    public void newNodeBtnAction() {
-        System.out.println("newNodeBtnAction...");
+    public void expandAllNodeBtnAction() {
+        System.out.println("expandAllNodeBtnAction...");
+    }
+
+    public void closeAllNodeBtnAction() {
+        System.out.println("closeAllNodeBtnAction...");
     }
 
     public void aboutBtnAction() {
-        System.out.println("aboutBtnAction...");
+        if (aboutDialog.isShowing()) {
+            return;
+        }
+        aboutDialog.show();
     }
 
 

@@ -21,10 +21,12 @@
                 <Menu text="编辑">
                     <MenuItem text="新建连接" fx:id="newConnBtn" onAction="#newConnBtnAction"/>
                     <SeparatorMenuItem/>
-                    <MenuItem text="新建节点" fx:id="newNodeBtn" onAction="#newNodeBtnAction"/>
+                    <MenuItem text="展开全部节点" fx:id="expandAllNodeBtn" disable="true" onAction="#expandAllNodeBtnAction"/>
+                    <MenuItem text="收起全部节点" fx:id="closeAllNodeBtn" disable="true" onAction="#closeAllNodeBtnAction"/>
                 </Menu>
-                <Menu text="关于" fx:id="aboutBtn" onAction="#aboutBtnAction"/>
+                <Menu fx:id="aboutBtn" mnemonicParsing="false"/>
             </MenuBar>
+
         </VBox>
     </top>
     <center>
