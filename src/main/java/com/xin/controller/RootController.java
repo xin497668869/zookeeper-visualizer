@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xin.ConfUtil;
 import com.xin.service.ConfService;
 import com.xin.view.AboutDialog;
+import com.xin.view.AlertTemplate;
 import com.xin.view.ProgressDialog;
 import com.xin.view.tab.ZkTab;
 import javafx.application.Platform;
@@ -15,21 +16,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.HyperlinkLabel;
 import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -193,22 +190,11 @@ public class RootController implements Initializable {
     }
 
     public void exportBtnAction() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Resource File");
-        fileChooser.setInitialFileName("connections.conf");
-        //fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File file = fileChooser.showSaveDialog(new Stage());
-        if (file == null) {
-            return;
-        }
-        try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(new BASE64Encoder().encode(JSON.toJSONString(ConfUtil.load()).getBytes()));
-            fw.flush();
-            fw.close();
-        } catch (Exception e) {
-            log.warn("导出配置异常：", e);
-        }
+        ConfService.getService().startExportToFile("Save Resource File", "connections.conf",
+                ConfUtil.load(), true, (res) -> {
+                    AlertTemplate.showTipAlert(res, "导出成功！", "导出失败！");
+                    return null;
+                });
     }
 
     public void exitBtnAction() {
@@ -221,23 +207,6 @@ public class RootController implements Initializable {
 
     public void expandAllNodeBtnAction() {
         System.out.println("expandAllNodeBtnAction...");
-
-        Tab tab = connectTabPane.getSelectionModel().getSelectedItem();
-        if (tab instanceof ZkTab) {
-            ZkTab zkTab = (ZkTab) tab;
-            //zkTab.getConf();
-
-            //TODO
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("未打开任何连接！");
-            alert.initModality(Modality.WINDOW_MODAL);
-            alert.initStyle(StageStyle.UTILITY);
-            alert.setTitle("");
-            alert.showAndWait();
-        }
-        System.out.println("selected Tab: " + tab.getText());
-
     }
 
     public void closeAllNodeBtnAction() {
