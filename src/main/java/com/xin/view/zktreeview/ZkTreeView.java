@@ -386,7 +386,8 @@ public class ZkTreeView extends TreeView<ZkNode> {
             List<String> subs = zkClientWithUi.getChildren(currNode.getPath());
             getSubTreeNodes(currNode.getPath(), subs, zkNodeInfo);
 
-            ConfService.getService().startExportToFile("Save Resource File", currNode.getName() + ".json",
+            String name = "/".equals(currNode.getName()) ? "root" : currNode.getName();
+            ConfService.getService().startExportToFile("Save Resource File", name + ".json",
                                                        zkNodeInfo, false, (res) -> {
                         AlertTemplate.showTipAlert(res, "导出成功！", "导出失败！");
                         return null;
@@ -398,7 +399,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
     private void getSubTreeNodes(String currPath, List<String> subs, ZkNodeInfo zkNodeInfo) {
         List<ZkNodeInfo> subList = new ArrayList<>();
         subs.forEach(node -> {
-            String nodePath = currPath + "/" + node;
+            String nodePath = "/".equals(currPath) ? currPath + node : currPath + "/" + node;
             try {
                 ZkNodeInfo info = new ZkNodeInfo().setName(node).setPath(nodePath).setData(zkClientWithUi.readData(nodePath, new Stat()));
                 subList.add(info);
