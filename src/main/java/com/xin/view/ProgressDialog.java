@@ -36,12 +36,7 @@ import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -144,9 +139,7 @@ public class ProgressDialog extends Dialog<Void> {
                         return;
                     case FAILED:
                         end();
-                        Alert alert = new Alert(Alert.AlertType.ERROR, zkConnectionTask.getException().getMessage());
-                        alert.setHeaderText("连接失败: " + zkConnectionTask.getConf());
-                        alert.showAndWait();
+                        AlertTemplate.showTipAlert(false, "", "连接失败！\n " + zkConnectionTask.getException().getMessage());
                         return;
                     case SUCCEEDED:
                         end();

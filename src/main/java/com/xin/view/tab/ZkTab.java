@@ -8,12 +8,7 @@ import com.xin.view.zktreeview.ZkTreeView;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +24,7 @@ import java.io.IOException;
  * @since 1.0
  */
 @Slf4j
+@Getter
 public class ZkTab extends Tab {
     public static final String     SPLIT_PANE = "#splitPane";
     private final       MaskerPane maskerPane = new MaskerPane();

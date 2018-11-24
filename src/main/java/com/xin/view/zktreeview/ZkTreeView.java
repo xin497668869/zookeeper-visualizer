@@ -3,17 +3,12 @@ package com.xin.view.zktreeview;
 import com.xin.ZkClientWithUi;
 import com.xin.ZkNode;
 import com.xin.controller.NodeAddController;
-import com.xin.util.match.FList;
-import com.xin.util.match.MinusculeMatcher;
-import com.xin.util.match.TextRange;
-import com.xin.view.FilterableTreeItem;
 import com.xin.view.SearchTextField;
 import com.xin.view.TreeCellSkin;
 import javafx.event.ActionEvent;
 import javafx.event.EventDispatcher;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -64,7 +59,7 @@ import static javafx.scene.input.MouseEvent.MOUSE_PRESSED;
 @Slf4j
 public class ZkTreeView extends TreeView<ZkNode> {
 
-    private ZkClientWithUi            zkClientWithUi;
+    private ZkClientWithUi zkClientWithUi;
     private ZkNode                    root               = new ZkNode("/", "/");
     private FilterableTreeItem        rootZkNodeTreeItem = new FilterableTreeItem(root);
     private EventHandler<ActionEvent> deleteNodeAction   = getDeleteNodeAction();
@@ -72,13 +67,13 @@ public class ZkTreeView extends TreeView<ZkNode> {
     private EventHandler<ActionEvent> expandNodeAction   = getExpandNodeAction();
     private EventHandler<ActionEvent> unExpandNodeAction = getUnExpandNodeAction();
 
+    private EventHandler<ActionEvent> exportNodeAction = getExportNodeAction();
     private ChangeSelectDataChangeListener selectToDataChangeListener;
     private SearchTextField                searchZkNodeTextField;
 
     private void resetBySearch(String text) {
         resetBySearch(root, text);
         refresh();
-
     }
 
     public boolean isMatchSearch(ZkNode parent, String text) {
@@ -204,9 +199,13 @@ public class ZkTreeView extends TreeView<ZkNode> {
                             MenuItem unExpandNode = new MenuItem("收缩所有节点");
                             unExpandNode.setOnAction(unExpandNodeAction);
                             contextMenu.getItems().add(unExpandNode);
+
+                            MenuItem exportNode = new MenuItem("导出节点");
+                            exportNode.setOnAction(exportNodeAction);
+                            contextMenu.getItems().add(exportNode);
+
+
                             setContextMenu(contextMenu);
-
-
                             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         }
 
@@ -356,14 +355,50 @@ public class ZkTreeView extends TreeView<ZkNode> {
     public boolean deleteZkNode(TreeItem<ZkNode> zkNodeTreeItem) {
         log.info("准备删除节点 " + zkNodeTreeItem.getValue().getPath());
         try {
-
-            zkClientWithUi.unsubscribeChildChanges(zkNodeTreeItem.getValue().getPath());
             return zkClientWithUi.deleteRecursive(zkNodeTreeItem.getValue().getPath());
         } catch (Exception e) {
             log.error("删除节点失败 ", e);
         }
 
         return false;
+    }
+
+    private EventHandler<ActionEvent> getExportNodeAction() {
+        ZkNodeInfo zkNodeInfo = new ZkNodeInfo();
+
+        return event -> {
+            ZkNode currNode = getSelectionModel().getSelectedItem().getValue();
+            if (currNode == null) {
+                return;
+            }
+            zkNodeInfo.setName(currNode.getName());
+            zkNodeInfo.setPath(currNode.getPath());
+
+            List<String> subs = zkClientWithUi.getChildren(currNode.getPath());
+            getSubTreeNodes(currNode.getPath(), subs, zkNodeInfo);
+
+            ConfService.getService().startExportToFile("Save Resource File", currNode.getName() + ".json",
+                    zkNodeInfo, false, (res) -> {
+                        AlertTemplate.showTipAlert(res, "导出成功！", "导出失败！");
+                        return null;
+                    });
+            event.consume();
+        };
+    }
+
+    private void getSubTreeNodes(String currPath, List<String> subs, ZkNodeInfo zkNodeInfo) {
+        List<ZkNodeInfo> subList = new ArrayList<>();
+        subs.forEach(node -> {
+            String nodePath = currPath + "/" + node;
+            try {
+                ZkNodeInfo info = new ZkNodeInfo().setName(node).setPath(nodePath).setData(zkClientWithUi.readData(nodePath, new Stat()));
+                subList.add(info);
+                zkNodeInfo.setChildren(subList);
+                getSubTreeNodes(nodePath, zkClientWithUi.getChildren(nodePath), info);
+            } catch (Exception e) {
+                log.info("获取节点[{}]的子节点失败，可能已经发生了变更", nodePath);
+            }
+        });
     }
 
     /**
@@ -434,6 +469,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
             TreeItem<ZkNode> treeItem = iterator.next();
             if (treeItem.getValue().getName().equals(nodeName)) {
                 closeChildren(treeItem);
+                iterator.remove();
             }
         }
         closeChildren(zkNodeTreeItem);
@@ -453,12 +489,12 @@ public class ZkTreeView extends TreeView<ZkNode> {
 
             Map<String, Set<IZkChildListener>> childListener = zkClientWithUi.getZkClient().getChildListener();
             String path = nodeTreeItem.getValue().getPath();
-            if (childListener.containsKey(path)) {
+            if(childListener.containsKey(path)) {
                 childListener.get(path).clear();
             }
 
             Map<String, Set<IZkDataListener>> dataListener = zkClientWithUi.getZkClient().getDataListener();
-            if (dataListener.containsKey(path)) {
+            if(dataListener.containsKey(path)) {
                 dataListener.get(path).clear();
             }
 
