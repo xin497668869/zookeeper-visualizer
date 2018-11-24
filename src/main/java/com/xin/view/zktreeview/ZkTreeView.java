@@ -2,13 +2,21 @@ package com.xin.view.zktreeview;
 
 import com.xin.ZkClientWithUi;
 import com.xin.ZkNode;
+import com.xin.ZkNodeInfo;
 import com.xin.controller.NodeAddController;
+import com.xin.service.ConfService;
+import com.xin.util.match.FList;
+import com.xin.util.match.MinusculeMatcher;
+import com.xin.util.match.TextRange;
+import com.xin.view.AlertTemplate;
+import com.xin.view.FilterableTreeItem;
 import com.xin.view.SearchTextField;
 import com.xin.view.TreeCellSkin;
 import javafx.event.ActionEvent;
 import javafx.event.EventDispatcher;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -38,6 +46,7 @@ import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
+import org.apache.zookeeper.data.Stat;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationResult;
 
@@ -59,7 +68,7 @@ import static javafx.scene.input.MouseEvent.MOUSE_PRESSED;
 @Slf4j
 public class ZkTreeView extends TreeView<ZkNode> {
 
-    private ZkClientWithUi zkClientWithUi;
+    private ZkClientWithUi            zkClientWithUi;
     private ZkNode                    root               = new ZkNode("/", "/");
     private FilterableTreeItem        rootZkNodeTreeItem = new FilterableTreeItem(root);
     private EventHandler<ActionEvent> deleteNodeAction   = getDeleteNodeAction();
@@ -67,7 +76,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
     private EventHandler<ActionEvent> expandNodeAction   = getExpandNodeAction();
     private EventHandler<ActionEvent> unExpandNodeAction = getUnExpandNodeAction();
 
-    private EventHandler<ActionEvent> exportNodeAction = getExportNodeAction();
+    private EventHandler<ActionEvent>      exportNodeAction = getExportNodeAction();
     private ChangeSelectDataChangeListener selectToDataChangeListener;
     private SearchTextField                searchZkNodeTextField;
 
@@ -378,7 +387,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
             getSubTreeNodes(currNode.getPath(), subs, zkNodeInfo);
 
             ConfService.getService().startExportToFile("Save Resource File", currNode.getName() + ".json",
-                    zkNodeInfo, false, (res) -> {
+                                                       zkNodeInfo, false, (res) -> {
                         AlertTemplate.showTipAlert(res, "导出成功！", "导出失败！");
                         return null;
                     });
@@ -489,18 +498,20 @@ public class ZkTreeView extends TreeView<ZkNode> {
 
             Map<String, Set<IZkChildListener>> childListener = zkClientWithUi.getZkClient().getChildListener();
             String path = nodeTreeItem.getValue().getPath();
-            if(childListener.containsKey(path)) {
+            if (childListener.containsKey(path)) {
                 childListener.get(path).clear();
             }
 
             Map<String, Set<IZkDataListener>> dataListener = zkClientWithUi.getZkClient().getDataListener();
-            if(dataListener.containsKey(path)) {
+            if (dataListener.containsKey(path)) {
                 dataListener.get(path).clear();
             }
 
             closeChildren(nodeTreeItem);
         }
-        zkNodeTreeItem.getChildren().clear();
+        if (zkNodeTreeItem.getChildren() != null) {
+            zkNodeTreeItem.getChildren().clear();
+        }
         zkNodeTreeItem.getValue().setChildren(null);
     }
 
