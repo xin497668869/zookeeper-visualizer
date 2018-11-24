@@ -64,17 +64,19 @@ import static javafx.scene.input.MouseEvent.MOUSE_PRESSED;
 @Slf4j
 public class ZkTreeView extends TreeView<ZkNode> {
 
-    private ZkClientWithUi                 zkClientWithUi;
-    private ZkNode                         root               = new ZkNode("/", "/");
-    private FilterableTreeItem             rootZkNodeTreeItem = new FilterableTreeItem(root);
-    private EventHandler<ActionEvent>      deleteNodeAction   = getDeleteNodeAction();
-    private EventHandler<ActionEvent>      addNodeAction      = getAddNodeAction();
+    private ZkClientWithUi            zkClientWithUi;
+    private ZkNode                    root               = new ZkNode("/", "/");
+    private FilterableTreeItem        rootZkNodeTreeItem = new FilterableTreeItem(root);
+    private EventHandler<ActionEvent> deleteNodeAction   = getDeleteNodeAction();
+    private EventHandler<ActionEvent> addNodeAction      = getAddNodeAction();
+    private EventHandler<ActionEvent> expandNodeAction   = getExpandNodeAction();
+    private EventHandler<ActionEvent> unExpandNodeAction = getUnExpandNodeAction();
+
     private ChangeSelectDataChangeListener selectToDataChangeListener;
     private SearchTextField                searchZkNodeTextField;
 
     private void resetBySearch(String text) {
         resetBySearch(root, text);
-        rootZkNodeTreeItem.refilter();
         refresh();
 
     }
@@ -118,7 +120,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
     }
 
     private void resetBySearch(ZkNode parent, String text) {
-
+        rootZkNodeTreeItem.refilter();
         if (parent.getChildren() == null) {
             return;
         }
@@ -192,7 +194,19 @@ public class ZkTreeView extends TreeView<ZkNode> {
                             MenuItem deleteNode = new MenuItem("删除节点");
                             deleteNode.setOnAction(deleteNodeAction);
                             contextMenu.getItems().add(deleteNode);
+
+
+                            MenuItem expandNode = new MenuItem("展开所有节点");
+                            expandNode.setOnAction(expandNodeAction);
+                            contextMenu.getItems().add(expandNode);
+
+
+                            MenuItem unExpandNode = new MenuItem("收缩所有节点");
+                            unExpandNode.setOnAction(unExpandNodeAction);
+                            contextMenu.getItems().add(unExpandNode);
                             setContextMenu(contextMenu);
+
+
                             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         }
 
@@ -251,6 +265,41 @@ public class ZkTreeView extends TreeView<ZkNode> {
         }
     }
 
+    private void expandAllChildren(ZkNode zkNode) {
+        zkNode.getTreeItem().setExpanded(true);
+        if (zkNode.getChildren() == null) {
+            return;
+        }
+        for (ZkNode child : zkNode.getChildren()) {
+            expandAllChildren(child);
+        }
+    }
+
+    private void unExpandAllChildren(ZkNode zkNode) {
+        zkNode.getTreeItem().setExpanded(false);
+        if (zkNode.getChildren() == null) {
+            return;
+        }
+        for (ZkNode child : zkNode.getChildren()) {
+            unExpandAllChildren(child);
+        }
+    }
+
+    private EventHandler<ActionEvent> getUnExpandNodeAction() {
+        return event -> {
+            ZkNode value = getSelectionModel().getSelectedItem().getValue();
+            unExpandAllChildren(value);
+        };
+    }
+
+    private EventHandler<ActionEvent> getExpandNodeAction() {
+        return event -> {
+            ZkNode value = getSelectionModel().getSelectedItem().getValue();
+            expandAllChildren(value);
+        };
+
+    }
+
     private EventHandler<ActionEvent> getDeleteNodeAction() {
         return event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -307,6 +356,8 @@ public class ZkTreeView extends TreeView<ZkNode> {
     public boolean deleteZkNode(TreeItem<ZkNode> zkNodeTreeItem) {
         log.info("准备删除节点 " + zkNodeTreeItem.getValue().getPath());
         try {
+
+            zkClientWithUi.unsubscribeChildChanges(zkNodeTreeItem.getValue().getPath());
             return zkClientWithUi.deleteRecursive(zkNodeTreeItem.getValue().getPath());
         } catch (Exception e) {
             log.error("删除节点失败 ", e);
@@ -322,6 +373,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
      */
     private void initRootItem(FilterableTreeItem rootZkNodeTreeItem) {
         setRoot(rootZkNodeTreeItem);
+        root.setTreeItem(rootZkNodeTreeItem);
         ArrowChangeListener listener = new ArrowChangeListener(zkClientWithUi, rootZkNodeTreeItem, this);
         rootZkNodeTreeItem.expandedProperty().addListener(listener);
         rootZkNodeTreeItem.setExpanded(true);
@@ -365,6 +417,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
             isMatch(childNode, zkNode, searchZkNodeTextField.getText());
 
             FilterableTreeItem treeItem = new FilterableTreeItem(childNode);
+            childNode.setTreeItem(treeItem);
             treeItem.expandedProperty().addListener(new ArrowChangeListener(zkClientWithUi, treeItem, this));
 
             zkNodeTreeItem.getInternalChildren().add(treeItem);
@@ -381,9 +434,9 @@ public class ZkTreeView extends TreeView<ZkNode> {
             TreeItem<ZkNode> treeItem = iterator.next();
             if (treeItem.getValue().getName().equals(nodeName)) {
                 closeChildren(treeItem);
-                iterator.remove();
             }
         }
+        closeChildren(zkNodeTreeItem);
     }
 
 

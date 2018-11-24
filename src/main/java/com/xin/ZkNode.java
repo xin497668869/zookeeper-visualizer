@@ -2,6 +2,7 @@ package com.xin;
 
 import com.xin.util.match.FList;
 import com.xin.util.match.TextRange;
+import com.xin.view.FilterableTreeItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,17 +17,20 @@ import java.util.List;
 @AllArgsConstructor
 public class ZkNode {
 
-    private String           path;
-    private String           name;
-    private boolean          isHighLight;
-    private FList<TextRange> matchSegments;
-    private List<ZkNode>     children;
-    private ZkNode           parent;
+    private String             path;
+    private String             name;
+    private boolean            isHighLight;
+    private boolean            childExpand;
+    private FList<TextRange>   matchSegments;
+    private List<ZkNode>       children;
+    private ZkNode             parent;
+    private FilterableTreeItem treeItem;
 
     public ZkNode(String path, String name) {
         this.path = path;
         this.name = name;
         isHighLight = true;
+        childExpand = false;
         matchSegments = FList.emptyList();
     }
 
@@ -60,5 +64,13 @@ public class ZkNode {
     @Override
     public String toString() {
         return name;
+    }
+
+    public FilterableTreeItem getTreeItem() {
+        return treeItem;
+    }
+
+    public void setTreeItem(FilterableTreeItem treeItem) {
+        this.treeItem = treeItem;
     }
 }

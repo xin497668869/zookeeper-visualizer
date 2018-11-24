@@ -144,4 +144,16 @@ public class ZkClientWithUi {
             log.error("zkClient执行异常", e);
         }
     }
+
+    public synchronized void unsubscribeChildChanges(String path) {
+        try {
+            zkClient.unsubscribeChildChanges(path);
+        } catch (ZkTimeoutException e) {
+            maskerPane.setVisible(true);
+            log.error("zkClient执行异常, 超时等待", e);
+        } catch (Exception e) {
+            AlertUtils.showErrorAlert("取消监听节点值变化异常", e.getMessage());
+            log.error("zkClient执行异常", e);
+        }
+    }
 }
