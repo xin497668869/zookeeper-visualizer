@@ -69,6 +69,17 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
      */
     private ObjectProperty<Predicate<? super E>> predicate;
 
+    @Override
+    public boolean remove(Object o) {
+        return getSource().remove(o);
+
+    }
+
+    @Override
+    public void clear() {
+        getSource().clear();
+    }
+
     public final ObjectProperty<Predicate<? super E>> predicateProperty() {
         if (predicate == null) {
             predicate = new ObjectPropertyBase<Predicate<? super E>>() {

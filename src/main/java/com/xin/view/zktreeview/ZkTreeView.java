@@ -474,14 +474,27 @@ public class ZkTreeView extends TreeView<ZkNode> {
 
     private void removeTreeItem(TreeItem<ZkNode> zkNodeTreeItem, String nodeName) {
         Iterator<TreeItem<ZkNode>> iterator = zkNodeTreeItem.getChildren().iterator();
+        TreeItem<ZkNode> findItem = null;
         while (iterator.hasNext()) {
             TreeItem<ZkNode> treeItem = iterator.next();
             if (treeItem.getValue().getName().equals(nodeName)) {
                 closeChildren(treeItem);
-                iterator.remove();
+                findItem = treeItem;
             }
         }
-        closeChildren(zkNodeTreeItem);
+        if (findItem != null) {
+            Map<String, Set<IZkChildListener>> childListener = zkClientWithUi.getZkClient().getChildListener();
+            String path = findItem.getValue().getPath();
+            if (childListener.containsKey(path)) {
+                childListener.get(path).clear();
+            }
+
+            Map<String, Set<IZkDataListener>> dataListener = zkClientWithUi.getZkClient().getDataListener();
+            if (dataListener.containsKey(path)) {
+                dataListener.get(path).clear();
+            }
+            zkNodeTreeItem.getChildren().remove(findItem);
+        }
     }
 
 
