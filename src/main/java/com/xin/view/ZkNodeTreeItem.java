@@ -158,26 +158,4 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
         }
     }
 
-//    public void setPredicate(Predicate predicate) {
-//        this.predicate.set(predicate);
-//    }
-
-//    protected void setHiddenFieldChildren(ObservableList<TreeItem<ZkNode>> list) {
-//        try {
-//            Field childrenField = TreeItem.class.getDeclaredField("children"); //$NON-NLS-1$
-//            childrenField.setAccessible(true);
-//            childrenField.set(this, list);
-//
-//            Field declaredField = TreeItem.class.getDeclaredField("childrenListener"); //$NON-NLS-1$
-//            declaredField.setAccessible(true);
-//            list.addListener((ListChangeListener<? super TreeItem<ZkNode>>) declaredField.get(this));
-//        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-//            throw new RuntimeException("Could not set TreeItem.children", e); //$NON-NLS-1$
-//        }
-//    }
-
-//    public ObservableList<TreeItem<ZkNode>> getInternalChildren() {
-//        return this.sourceList;
-//    }
-
 }

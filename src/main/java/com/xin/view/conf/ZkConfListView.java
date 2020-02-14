@@ -59,7 +59,7 @@ public class ZkConfListView extends ListView<ZkConf> {
     public void installConnectTrigger(TabPane connectTabPane) {
         this.connectTrigger = () -> {
             final ZkConf selectedItem = getSelectionModel().getSelectedItem();
-            ProgressDialog progressDialog = new ProgressDialog(toString() + "  连接中...", selectedItem,
+            ProgressDialog progressDialog = new ProgressDialog(selectedItem + "  连接中...", selectedItem,
                                                                new Consumer<ZkClient>() {
                                                                    @Override
                                                                    public void accept(ZkClient zkClient) {

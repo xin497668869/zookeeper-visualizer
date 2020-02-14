@@ -31,7 +31,6 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
         List<String> currentChilds = zkClientWrap.getChildren(zkNodeTreeItem.getValue()
                                                                             .getPath());
         zkNodeTreeItem.refreshByParent(currentChilds);
-//        zkTreeView.refresh();
     }
 
     @Override
@@ -52,12 +51,6 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
         if(currentChilds== null) {
             return ;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                zkNodeTreeItem.refreshByParent(currentChilds);
-//                zkTreeView.refresh();
-            }
-        });
+        Platform.runLater(() -> zkNodeTreeItem.refreshByParent(currentChilds));
     }
 }

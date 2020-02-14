@@ -4,6 +4,7 @@ import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
 import com.xin.controller.NodeAddController;
 import javafx.event.ActionEvent;
+import javafx.event.EventDispatcher;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -89,6 +90,7 @@ public class ZkNodeTreeCell extends TreeCell<ZkNode> {
     }
 
     private void treeItemDoubleClick() {
+        EventDispatcher eventDispatcher = getEventDispatcher();
         setEventDispatcher((event, tail) -> {
             if (event instanceof MouseEvent) {
                 if (((MouseEvent) event).getButton() == MouseButton.PRIMARY
@@ -103,8 +105,7 @@ public class ZkNodeTreeCell extends TreeCell<ZkNode> {
                     return event;
                 }
             }
-            return getEventDispatcher()
-                    .dispatchEvent(event, tail);
+            return eventDispatcher.dispatchEvent(event, tail);
         });
     }
 

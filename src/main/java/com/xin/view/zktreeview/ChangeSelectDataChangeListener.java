@@ -29,7 +29,7 @@ public class ChangeSelectDataChangeListener implements ChangeListener<TreeItem<Z
 
         @Override
         public void handleDataDeleted(String dataPath) {
-            nodeInfoEditProxy.updateDate(dataPath);
+            nodeInfoEditProxy.deleteNode();
         }
     };
 

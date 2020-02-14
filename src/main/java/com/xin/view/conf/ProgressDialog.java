@@ -26,7 +26,6 @@
  */
 package com.xin.view.conf;
 
-import com.xin.DialogUtils;
 import com.xin.ZkConfService.ZkConf;
 import com.xin.view.AlertTemplate;
 import com.xin.view.ZkConnectionTask;
@@ -35,7 +34,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -43,19 +41,15 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import lombok.Getter;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.util.function.Consumer;
 
-import static com.xin.DialogUtils.forcefullyHideDialog;
-
-public class ProgressDialog extends Dialog<Void> {
+public class ProgressDialog extends Dialog<Boolean> {
 
     @Getter
     private final ZkConf zkConf;
@@ -87,26 +81,26 @@ public class ProgressDialog extends Dialog<Void> {
          */
         Button close = new Button("close");
         close.setPrefWidth(150);
-        close.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                forcefullyHideDialog(ProgressDialog.this);
-                worker.cancel();
-            }
+        close.setOnMouseClicked(event -> {
+            closeDialog();
+            worker.cancel();
         });
         vbox.setAlignment(Pos.BASELINE_CENTER);
-        vbox.getChildren().add(close);
+        vbox.getChildren()
+            .add(close);
         dialogPane.setContent(vbox);
-        Window window = getDialogPane().getScene().getWindow();
-        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                forcefullyHideDialog(ProgressDialog.this);
-                worker.cancel();
-            }
+        Window window = getDialogPane().getScene()
+                                       .getWindow();
+        window.setOnCloseRequest(event -> {
+            closeDialog();
+            worker.cancel();
         });
     }
 
+    public void closeDialog() {
+        setResult(true);
+        close();
+    }
 
     /**************************************************************************
      *
@@ -125,9 +119,12 @@ public class ProgressDialog extends Dialog<Void> {
      */
     private static class WorkerProgressPane extends Region {
         private final Consumer<ZkClient> successRun;
-        private       Worker<?>          worker;
+        private final ProgressDialog dialog;
+        private final ProgressBar progressBar;
+        private Worker<?> worker;
 
-
+        // If the progress indicator changes, then we need to re-initialize
+        // If the worker changes, we need to re-initialize
         private ChangeListener<Worker.State> stateListener = new ChangeListener<Worker.State>() {
             @Override
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State old, Worker.State value) {
@@ -139,7 +136,8 @@ public class ProgressDialog extends Dialog<Void> {
                         return;
                     case FAILED:
                         end();
-                        AlertTemplate.showTipAlert(false, "", "连接失败！\n " + zkConnectionTask.getException().getMessage());
+                        AlertTemplate.showTipAlert(false, "", "连接失败！\n " + zkConnectionTask.getException()
+                                                                                           .getMessage());
                         return;
                     case SUCCEEDED:
                         end();
@@ -152,30 +150,6 @@ public class ProgressDialog extends Dialog<Void> {
             }
         };
 
-        public final void setWorker(final Worker<?> newWorker) {
-            if (newWorker != worker) {
-                if (worker != null) {
-                    worker.stateProperty().removeListener(stateListener);
-                    end();
-                }
-
-                worker = newWorker;
-
-                if (newWorker != null) {
-                    newWorker.stateProperty().addListener(stateListener);
-                    if (newWorker.getState() == Worker.State.RUNNING || newWorker.getState() == Worker.State.SCHEDULED) {
-                        // It is already running
-                    }
-                }
-            }
-        }
-
-        // If the progress indicator changes, then we need to re-initialize
-        // If the worker changes, we need to re-initialize
-
-        private final ProgressDialog dialog;
-        private final ProgressBar    progressBar;
-
         public WorkerProgressPane(ProgressDialog dialog, Consumer<ZkClient> successRun) {
             this.successRun = successRun;
             this.dialog = dialog;
@@ -185,14 +159,29 @@ public class ProgressDialog extends Dialog<Void> {
             getChildren().add(progressBar);
 
             if (worker != null) {
-                progressBar.progressProperty().bind(worker.progressProperty());
+                progressBar.progressProperty()
+                           .bind(worker.progressProperty());
             }
         }
 
+        public final void setWorker(final Worker<?> newWorker) {
+            if (newWorker != worker) {
+                if (worker != null) {
+                    worker.stateProperty()
+                          .removeListener(stateListener);
+                    end();
+                }
 
-        private void end() {
-            progressBar.progressProperty().unbind();
-            DialogUtils.forcefullyHideDialog(dialog);
+                worker = newWorker;
+
+                if (newWorker != null) {
+                    newWorker.stateProperty()
+                             .addListener(stateListener);
+                    if (newWorker.getState() == Worker.State.RUNNING || newWorker.getState() == Worker.State.SCHEDULED) {
+                        // It is already running
+                    }
+                }
+            }
         }
 
         @Override
@@ -208,6 +197,13 @@ public class ProgressDialog extends Dialog<Void> {
 
                 progressBar.resizeRelocate(x, y, w, prefH);
             }
+        }
+
+        private void end() {
+            progressBar.progressProperty()
+                       .unbind();
+            dialog.closeDialog();
+
         }
     }
 }

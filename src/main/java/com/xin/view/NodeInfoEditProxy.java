@@ -65,6 +65,12 @@ public class NodeInfoEditProxy {
         }
     }
 
+    public void deleteNode() {
+        zkPathTextField.setText("");
+        zkNodeDataTextArea.setText("");
+        zkNodeStatTextArea.setText("");
+    }
+
     private String formatStat(Stat stat) {
         return String.format("cZxid = %X\n" +
                                      "ctime = %s\n" +
