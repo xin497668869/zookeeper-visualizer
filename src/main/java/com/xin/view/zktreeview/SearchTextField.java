@@ -1,4 +1,4 @@
-package com.xin.view;
+package com.xin.view.zktreeview;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.InvalidationListener;

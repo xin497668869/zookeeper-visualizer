@@ -24,10 +24,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.xin.view;
+package com.xin.view.conf;
 
-import com.xin.ConfUtil;
 import com.xin.DialogUtils;
+import com.xin.ZkConfService.ZkConf;
+import com.xin.view.AlertTemplate;
+import com.xin.view.ZkConnectionTask;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,7 +38,11 @@ import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -49,29 +55,23 @@ import java.util.function.Consumer;
 
 import static com.xin.DialogUtils.forcefullyHideDialog;
 
-
 public class ProgressDialog extends Dialog<Void> {
 
     @Getter
-    private final ConfUtil.Conf  conf;
-    private       ZkClient       connect;
+    private final ZkConf zkConf;
     @Getter
-    private       Task<ZkClient> worker;
+    private Task<ZkClient> worker;
 
-
-    public ProgressDialog(String text, ConfUtil.Conf conf, Consumer<ZkClient> successRun) {
-        this.conf = conf;
+    public ProgressDialog(String text, ZkConf zkConf, Consumer<ZkClient> successRun) {
+        this.zkConf = zkConf;
         final DialogPane dialogPane = getDialogPane();
-
-        setTitle("连接中"); //$NON-NLS-1$
 
         final Label space = new Label("");
         final Label progressMessag2e = new Label(text);
         space.setPadding(new Insets(0, 0, 1, 0));
 
-
         final WorkerProgressPane content = new WorkerProgressPane(this, successRun);
-        worker = new ZkConnectionTask(conf);
+        worker = new ZkConnectionTask(zkConf);
         Thread th = new Thread(worker);
         th.start();
 

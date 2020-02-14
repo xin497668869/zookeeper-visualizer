@@ -1,4 +1,29 @@
-package com.xin.view;
+/*
+ * Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+package com.xin.view.conf;
 
 import com.sun.javafx.collections.NonIterableChange.GenericAddRemoveChange;
 import com.sun.javafx.collections.SortHelper;
@@ -17,26 +42,30 @@ import java.util.ListIterator;
 import java.util.function.Predicate;
 
 /**
- * @author linxixin@cvte.com
- * @since 1.0
+ * Wraps an ObservableList and filters it's content using the provided Predicate.
+ * All changes in the ObservableList are propagated immediately
+ * to the FilteredList.
+ *
+ * @see TransformationList
+ * @since JavaFX 8.0
  */
-public class TreeItemFilteredList<E> extends TransformationList<E, E> {
+public final class SearchFilterObservalbeList<E> extends TransformationList<E, E> {
 
     private int[] filtered;
-    private int   size;
+    private int size;
 
-    private              SortHelper helper;
-    private static final Predicate  ALWAYS_TRUE = t -> true;
+    private SortHelper helper;
+    private static final Predicate ALWAYS_TRUE = t -> true;
 
     /**
      * Constructs a new FilteredList wrapper around the source list.
      * The provided predicate will match the elements in the source list that will be visible.
      * If the predicate is null, all elements will be matched and the list is equal to the source list.
      *
-     * @param source    the source list
+     * @param source the source list
      * @param predicate the predicate to match the elements or null to match all elements.
      */
-    public TreeItemFilteredList(@NamedArg("source") ObservableList<E> source, @NamedArg("predicate") Predicate<? super E> predicate) {
+    public SearchFilterObservalbeList(@NamedArg("source") ObservableList<E> source, @NamedArg("predicate") Predicate<? super E> predicate) {
         super(source);
         filtered = new int[source.size() * 3 / 2 + 1];
         if (predicate != null) {
@@ -58,7 +87,7 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
      *
      * @param source the source list
      */
-    public TreeItemFilteredList(@NamedArg("source") ObservableList<E> source) {
+    public SearchFilterObservalbeList(@NamedArg("source") ObservableList<E> source) {
         this(source, null);
     }
 
@@ -68,17 +97,6 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
      * Null predicate means "always true" predicate, all elements will be matched.
      */
     private ObjectProperty<Predicate<? super E>> predicate;
-
-    @Override
-    public boolean remove(Object o) {
-        return getSource().remove(o);
-
-    }
-
-    @Override
-    public void clear() {
-        getSource().clear();
-    }
 
     public final ObjectProperty<Predicate<? super E>> predicateProperty() {
         if (predicate == null) {
@@ -90,7 +108,7 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
 
                 @Override
                 public Object getBean() {
-                    return TreeItemFilteredList.this;
+                    return SearchFilterObservalbeList.this;
                 }
 
                 @Override
@@ -146,7 +164,7 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
     /**
      * Returns the element at the specified position in this list.
      *
-     * @param index index of the element to return
+     * @param  index index of the element to return
      * @return the element at the specified position in this list
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
@@ -191,7 +209,7 @@ public class TreeItemFilteredList<E> extends TransformationList<E, E> {
     @SuppressWarnings("unchecked")
     private void ensureSize(int size) {
         if (filtered.length < size) {
-            int[] replacement = new int[size * 3 / 2 + 1];
+            int[] replacement = new int[size * 3/2 + 1];
             System.arraycopy(filtered, 0, replacement, 0, this.size);
             filtered = replacement;
         }

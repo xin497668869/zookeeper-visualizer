@@ -1,7 +1,7 @@
 package com.xin.view.zktreeview;
 
-import com.xin.ZkClientWithUi;
-import com.xin.view.FilterableTreeItem;
+import com.xin.ZkClientWrap;
+import com.xin.view.ZkNodeTreeItem;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,21 +17,21 @@ import java.util.List;
 @Slf4j
 public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildListener {
 
-    private final ZkClientWithUi     zkClientWithUi;
-    private final FilterableTreeItem zkNodeTreeItem;
-    private final ZkTreeView         zkTreeView;
+    private final ZkClientWrap zkClientWrap;
+    private final ZkNodeTreeItem zkNodeTreeItem;
 
-    public ArrowChangeListener(ZkClientWithUi zkClientWithUi, FilterableTreeItem zkNodeTreeItem, ZkTreeView zkTreeView) {
-        this.zkClientWithUi = zkClientWithUi;
+    public ArrowChangeListener(ZkClientWrap zkClientWrap, ZkNodeTreeItem zkNodeTreeItem) {
+        this.zkClientWrap = zkClientWrap;
         this.zkNodeTreeItem = zkNodeTreeItem;
-        this.zkTreeView = zkTreeView;
     }
 
     private void fire() {
-        zkClientWithUi.subscribeChildChanges(zkNodeTreeItem.getValue().getPath(), this);
-        List<String> currentChilds = zkClientWithUi.getChildren(zkNodeTreeItem.getValue().getPath());
-        zkTreeView.refreshByParent(zkNodeTreeItem, currentChilds);
-        zkTreeView.refresh();
+        zkClientWrap.subscribeChildChanges(zkNodeTreeItem.getValue()
+                                                         .getPath(), this);
+        List<String> currentChilds = zkClientWrap.getChildren(zkNodeTreeItem.getValue()
+                                                                            .getPath());
+        zkNodeTreeItem.refreshByParent(currentChilds);
+//        zkTreeView.refresh();
     }
 
     @Override
@@ -39,8 +39,9 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
         if (newValue) {
             fire();
         } else {
-            zkClientWithUi.unsubscribeChildChanges(zkNodeTreeItem.getValue().getPath(), this);
-            zkTreeView.closeChildren(zkNodeTreeItem);
+            zkClientWrap.unsubscribeChildChanges(zkNodeTreeItem.getValue()
+                                                               .getPath(), this);
+            zkNodeTreeItem.closeChildren();
         }
     }
 
@@ -54,8 +55,8 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                zkTreeView.refreshByParent(zkNodeTreeItem, currentChilds);
-                zkTreeView.refresh();
+                zkNodeTreeItem.refreshByParent(currentChilds);
+//                zkTreeView.refresh();
             }
         });
     }

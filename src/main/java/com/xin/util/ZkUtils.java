@@ -1,6 +1,6 @@
 package com.xin.util;
 
-import com.xin.ConfUtil;
+import com.xin.ZkConfService.ZkConf;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkMarshallingError;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
@@ -12,11 +12,11 @@ import java.nio.charset.StandardCharsets;
  * @since 1.0
  */
 public class ZkUtils {
-    public static  void init() {
+    public static void init() {
     }
 
-    public static ZkClient getConnection(ConfUtil.Conf conf) {
-        ZkClient zkClient = new ZkClient(conf.getAddress(), 5000, 5000, new ZkSerializer() {
+    public static ZkClient getConnection(ZkConf zkConf) {
+        ZkClient zkClient = new ZkClient(zkConf.getAddress(), 5000, 5000, new ZkSerializer() {
             @Override
             public byte[] serialize(Object data) throws ZkMarshallingError {
                 if (data == null) {

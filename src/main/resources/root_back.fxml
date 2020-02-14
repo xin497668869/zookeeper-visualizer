@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.xin.view.conf.ZkConfListView?>
 <?import com.xin.view.zktreeview.SearchTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -42,8 +42,8 @@
                 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="300.0" minWidth="200.0" prefHeight="200.0"
                             prefWidth="200.0">
                     <center>
-                        <ZkConfListView fx:id="zkConfListView" prefHeight="495.0" prefWidth="230.0"
-                                        BorderPane.alignment="CENTER"/>
+                        <ListView fx:id="zkConfListView" prefHeight="495.0" prefWidth="230.0"
+                                  BorderPane.alignment="CENTER"/>
                     </center>
                     <top>
                         <VBox alignment="CENTER">
@@ -62,13 +62,14 @@
                     <center>
                         <TabPane fx:id="connectTabPane" prefHeight="200.0" prefWidth="200.0"
                                  tabClosingPolicy="UNAVAILABLE">
-                                <Tab text="介绍页">
-                                    <BorderPane>
-                                        <center>
-                                            <HyperlinkLabel style="-fx-font-size: 15px" fx:id="welcomeInfo" text="zookeeper-visualizer是zookeeper的可视化管理工具"></HyperlinkLabel>
-                                        </center>
-                                    </BorderPane>
-                                </Tab>
+                            <Tab text="介绍页">
+                                <BorderPane>
+                                    <center>
+                                        <HyperlinkLabel style="-fx-font-size: 15px" fx:id="welcomeInfo"
+                                                        text="zookeeper-visualizer是zookeeper的可视化管理工具"></HyperlinkLabel>
+                                    </center>
+                                </BorderPane>
+                            </Tab>
                         </TabPane>
                     </center>
                 </BorderPane>

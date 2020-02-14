@@ -35,14 +35,14 @@ import javafx.scene.control.DialogPane;
 public class DialogUtils {
 
     public static void forcefullyHideDialog(javafx.scene.control.Dialog<?> dialog) {
-        // for the dialog to be able to hide, we need a cancel button,
-        // so lets put one in now and then immediately call hide, and then
-        // remove the button again (if necessary).
-        DialogPane dialogPane = dialog.getDialogPane();
-
-        dialogPane.getButtonTypes().add(ButtonType.CANCEL);
-        dialog.close();
-        dialogPane.getButtonTypes().remove(ButtonType.CANCEL);
+//        // for the dialog to be able to hide, we need a cancel button,
+//        // so lets put one in now and then immediately call hide, and then
+//        // remove the button again (if necessary).
+//        DialogPane dialogPane = dialog.getDialogPane();
+//
+//        dialogPane.getButtonTypes().add(ButtonType.CANCEL);
+//        dialog.close();
+//        dialogPane.getButtonTypes().remove(ButtonType.CANCEL);
     }
     
     static boolean containsCancelButton(Dialog<?> dialog) {

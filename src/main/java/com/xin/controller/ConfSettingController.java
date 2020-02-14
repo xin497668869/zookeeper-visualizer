@@ -1,6 +1,6 @@
 package com.xin.controller;
 
-import com.xin.ConfUtil;
+import com.xin.ZkConfService.ZkConf;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -34,9 +34,11 @@ public class ConfSettingController implements Initializable {
     }
 
     public void onClickToCreateSetting(MouseEvent mouseEvent) {
-        ConfUtil.Conf conf = new ConfUtil.Conf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
-        createConfButton.getScene().setUserData(conf);
-        Stage window = (Stage) createConfButton.getScene().getWindow();
+        ZkConf zkConf = new ZkConf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
+        createConfButton.getScene()
+                        .setUserData(zkConf);
+        Stage window = (Stage) createConfButton.getScene()
+                                               .getWindow();
         window.close();
     }
 
@@ -44,13 +46,13 @@ public class ConfSettingController implements Initializable {
         testConnectButton.setDisable(true);
 
         testResultMsg.setText("连接中...");
-        ConfUtil.Conf conf = new ConfUtil.Conf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
+        ZkConf zkConf = new ZkConf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
 
         new Thread(() -> {
             boolean isSuccess = true;
             ZkClient zkClient = null;
             try {
-                zkClient = new ZkClient(conf.getAddress(), 5000);
+                zkClient = new ZkClient(zkConf.getAddress(), 5000);
                 zkClient.connection();
             } catch (Exception e) {
                 isSuccess = false;

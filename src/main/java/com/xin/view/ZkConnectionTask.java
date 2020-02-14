@@ -1,6 +1,6 @@
 package com.xin.view;
 
-import com.xin.ConfUtil;
+import com.xin.ZkConfService.ZkConf;
 import com.xin.util.ZkUtils;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -14,20 +14,20 @@ import org.I0Itec.zkclient.ZkClient;
 @Slf4j
 public class ZkConnectionTask extends Task<ZkClient> {
     @Getter
-    private ConfUtil.Conf conf;
+    private ZkConf zkConf;
     @Getter
-    private ZkClient      zkClient;
+    private ZkClient zkClient;
 
-    public ZkConnectionTask(ConfUtil.Conf conf) {
-        this.conf = conf;
+    public ZkConnectionTask(ZkConf zkConf) {
+        this.zkConf = zkConf;
     }
 
     @Override
     protected ZkClient call() throws Exception {
-        zkClient = ZkUtils.getConnection(conf);
+        zkClient = ZkUtils.getConnection(zkConf);
         try {
             zkClient.connection();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             zkClient.close();
             throw e;

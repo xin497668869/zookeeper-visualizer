@@ -23,7 +23,7 @@
  *
  */
 
-package com.xin.view;
+package com.xin.view.zktreeview;
 
 import com.sun.javafx.css.converters.SizeConverter;
 import com.sun.javafx.scene.control.MultiplePropertyChangeListenerHandler;

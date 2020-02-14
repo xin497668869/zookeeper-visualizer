@@ -1,10 +1,9 @@
 package com.xin;
 
-import com.xin.util.match.FList;
-import com.xin.util.match.TextRange;
-import com.xin.view.FilterableTreeItem;
+import com.xin.view.ZkNodeTreeItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,22 +15,18 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ZkNode {
-
+    @Getter
     private String             path;
     private String             name;
-    private boolean            isHighLight;
     private boolean            childExpand;
-    private FList<TextRange>   matchSegments;
     private List<ZkNode>       children;
-    private ZkNode             parent;
-    private FilterableTreeItem treeItem;
+    private ZkNode parent;
+    private ZkNodeTreeItem treeItem;
 
     public ZkNode(String path, String name) {
         this.path = path;
         this.name = name;
-        isHighLight = true;
         childExpand = false;
-        matchSegments = FList.emptyList();
     }
 
     public ZkNode getParent() {
@@ -42,17 +37,7 @@ public class ZkNode {
         this.parent = parent;
     }
 
-    public void setHighLight(boolean highLight) {
-        isHighLight = highLight;
-    }
 
-    public FList<TextRange> getMatchSegments() {
-        return matchSegments;
-    }
-
-    public void setMatchSegments(FList<TextRange> matchSegments) {
-        this.matchSegments = matchSegments;
-    }
 
     public void addChild(ZkNode zkNode) {
         if (children == null) {
@@ -66,11 +51,12 @@ public class ZkNode {
         return name;
     }
 
-    public FilterableTreeItem getTreeItem() {
+    public ZkNodeTreeItem getTreeItem() {
         return treeItem;
     }
 
-    public void setTreeItem(FilterableTreeItem treeItem) {
+    public void setTreeItem(ZkNodeTreeItem treeItem) {
         this.treeItem = treeItem;
     }
+
 }
