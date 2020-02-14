@@ -65,7 +65,7 @@ public class NodeInfoEditProxy {
         }
     }
 
-    public void deleteNode() {
+    public void selectNoNode() {
         zkPathTextField.setText("");
         zkNodeDataTextArea.setText("");
         zkNodeStatTextArea.setText("");

@@ -2,9 +2,12 @@ package com.xin.view.zktreeview;
 
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
+import com.xin.util.FuzzyMatchUtils;
+import com.xin.util.match.StringUtil;
 import com.xin.view.NodeInfoEditProxy;
 import com.xin.view.ZkNodeTreeItem;
 import javafx.event.EventHandler;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +26,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
     public void init(ZkClientWrap zkClient, SearchTextField searchZkNodeTextField, NodeInfoEditProxy nodeInfoEditProxy) {
         this.zkClientWrap = zkClient;
         this.searchZkNodeTextField = searchZkNodeTextField;
-        initRootItem();
+        ZkNodeTreeItem rootZkNodeTreeItem = initRootItem();
 
         setCellFactory(param -> new ZkNodeTreeCell(this, zkClientWrap));
 
@@ -32,15 +35,42 @@ public class ZkTreeView extends TreeView<ZkNode> {
         getSelectionModel().selectedItemProperty()
                            .addListener(selectToDataChangeListener);
 
-//        searchZkNodeTextField.textProperty()
-//                             .addListener((observable, oldValue, newValue) -> {
-//                                 resetBySearch(newValue);
-//                                 refresh();
-//                             });
+        searchZkNodeTextField.textProperty()
+                             .addListener((observable, oldValue, newValue) -> {
+                                 filterBySearchValue(rootZkNodeTreeItem, newValue);
+                                 updateShowTreeItems(rootZkNodeTreeItem);
+
+                             });
 
         pressKeyToSearchInputText(searchZkNodeTextField);
 
         refresh();
+    }
+
+    private void updateShowTreeItems(ZkNodeTreeItem rootZkNodeTreeItem) {
+        rootZkNodeTreeItem.updateShowTreeItems();
+        for (TreeItem<ZkNode> source : rootZkNodeTreeItem.getSources()) {
+            ((ZkNodeTreeItem) source).updateShowTreeItems();
+        }
+    }
+
+    private boolean filterBySearchValue(ZkNodeTreeItem rootZkNodeTreeItem,
+                                        String newValue) {
+        if (StringUtil.isEmpty(newValue)) {
+            rootZkNodeTreeItem.setHide(false);
+        } else {
+            rootZkNodeTreeItem.setHide(!FuzzyMatchUtils.match(rootZkNodeTreeItem.getValue()
+                                                                                .getName(), newValue));
+        }
+
+        for (TreeItem<ZkNode> child : rootZkNodeTreeItem.getSources()) {
+            ZkNodeTreeItem zkNodeTreeItem = (ZkNodeTreeItem) child;
+            if (filterBySearchValue(zkNodeTreeItem, newValue)) {
+                rootZkNodeTreeItem.setHide(false);
+            }
+        }
+        return true;
+
     }
 
     /**
@@ -80,12 +110,13 @@ public class ZkTreeView extends TreeView<ZkNode> {
     /**
      * 跟节点初始化, 添加箭头监听, 展开第二层
      */
-    private void initRootItem() {
+    private ZkNodeTreeItem initRootItem() {
         ZkNode root = new ZkNode("/", "/");
         ZkNodeTreeItem rootZkNodeTreeItem = new ZkNodeTreeItem(zkClientWrap, root);
         setRoot(rootZkNodeTreeItem);
         root.setTreeItem(rootZkNodeTreeItem);
         rootZkNodeTreeItem.setExpanded(true);
+        return rootZkNodeTreeItem;
     }
 
 }

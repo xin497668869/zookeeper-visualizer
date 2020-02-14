@@ -113,7 +113,11 @@ public class ZkTab extends Tab {
         treeView.getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    nodeInfoEditProxy.reloadInfo(newValue.getValue());
+                    if (newValue != null) {
+                        nodeInfoEditProxy.reloadInfo(newValue.getValue());
+                    } else {
+                        nodeInfoEditProxy.selectNoNode();
+                    }
                 });
     }
 

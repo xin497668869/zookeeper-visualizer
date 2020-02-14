@@ -4,6 +4,8 @@ import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
 import com.xin.view.zktreeview.ArrowChangeListener;
 import javafx.scene.control.TreeItem;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
@@ -24,37 +26,37 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
 
     private final ZkClientWrap zkClientWrap;
 
+    @Getter
+    @Setter
+    private boolean hide = false;
+    @Getter
+    private List<TreeItem<ZkNode>> sources = new ArrayList<>();
+
     public ZkNodeTreeItem(ZkClientWrap zkClientWrap, ZkNode value) {
         super(value);
         ArrowChangeListener listener = new ArrowChangeListener(zkClientWrap, this);
         this.zkClientWrap = zkClientWrap;
         this.expandedProperty()
             .addListener(listener);
-//        this.sourceList = FXCollections.observableArrayList();
-//        this.filteredList = new SearchFilterObservalbeList<>(this.sourceList, new Predicate<TreeItem<ZkNode>>() {
-//            @Override
-//            public boolean test(TreeItem<ZkNode> zkNodeTreeItem) {
-////                return zkNodeTreeItem.getValue().isHighLight();
-//                return true;
-//            }
-//        });
-        ;
-//        setHiddenFieldChildren(this.filteredList);
     }
 
-    public void addChildren(ZkNodeTreeItem treeItem) {
-        getChildren()
-                .add(treeItem);
+    public void updateShowTreeItems() {
+        getChildren().clear();
+        for (TreeItem<ZkNode> source : sources) {
+            if (!((ZkNodeTreeItem) source).isHide()) {
+                getChildren().add(source);
+            }
+        }
     }
 
     /**
      * 删除所有节点信息, 主要是要撤销监听器
      */
     public void closeChildren() {
-        if (getChildren() == null) {
+        if (sources == null) {
             return;
         }
-        for (TreeItem<ZkNode> nodeTreeItem : getChildren()) {
+        for (TreeItem<ZkNode> nodeTreeItem : sources) {
 
             Map<String, Set<IZkChildListener>> childListener = zkClientWrap.getZkClient()
                                                                            .getChildListener();
@@ -74,12 +76,10 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
 
             ((ZkNodeTreeItem) nodeTreeItem).closeChildren();
         }
-        if (getChildren() != null) {
-            getChildren()
-                    .clear();
+        if (sources != null) {
+            sources.clear();
         }
-        getValue()
-                .setChildren(null);
+        getValue().setChildren(null);
     }
 
     /**
@@ -119,14 +119,18 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
 
             addChildren(treeItem);
         }
+        updateShowTreeItems();
+        sources.sort(Comparator.comparing(zkNodeTreeItem1 -> children.indexOf(zkNodeTreeItem1.getValue()
+                                                                                             .getName())));
+    }
 
-        getChildren()
-                .sort(Comparator.comparing(zkNodeTreeItem1 -> children.indexOf(zkNodeTreeItem1.getValue()
-                                                                                              .getName())));
+    private void addChildren(ZkNodeTreeItem treeItem) {
+        sources.add(treeItem);
+
     }
 
     private void removeTreeItem(String nodeName) {
-        Iterator<TreeItem<ZkNode>> iterator = getChildren().iterator();
+        Iterator<TreeItem<ZkNode>> iterator = sources.iterator();
         TreeItem<ZkNode> findItem = null;
         while (iterator.hasNext()) {
             TreeItem<ZkNode> treeItem = iterator.next();
@@ -153,8 +157,7 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
                 dataListener.get(path)
                             .clear();
             }
-            getChildren()
-                    .remove(findItem);
+            sources.remove(findItem);
         }
     }
 
