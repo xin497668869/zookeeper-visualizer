@@ -57,19 +57,19 @@ public class ZkTreeView extends TreeView<ZkNode> {
     private boolean filterBySearchValue(ZkNodeTreeItem rootZkNodeTreeItem,
                                         String newValue) {
         if (StringUtil.isEmpty(newValue)) {
-            rootZkNodeTreeItem.setHide(false);
+            rootZkNodeTreeItem.setShow(true);
         } else {
-            rootZkNodeTreeItem.setHide(!FuzzyMatchUtils.match(rootZkNodeTreeItem.getValue()
-                                                                                .getName(), newValue));
+            rootZkNodeTreeItem.setShow(FuzzyMatchUtils.match(rootZkNodeTreeItem.getValue()
+                                                                               .getName(), newValue));
         }
 
         for (TreeItem<ZkNode> child : rootZkNodeTreeItem.getSources()) {
             ZkNodeTreeItem zkNodeTreeItem = (ZkNodeTreeItem) child;
             if (filterBySearchValue(zkNodeTreeItem, newValue)) {
-                rootZkNodeTreeItem.setHide(false);
+                rootZkNodeTreeItem.setShow(true);
             }
         }
-        return true;
+        return rootZkNodeTreeItem.isShow();
 
     }
 

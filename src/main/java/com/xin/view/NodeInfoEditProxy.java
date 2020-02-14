@@ -5,9 +5,13 @@ import com.xin.ZkNode;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.data.Stat;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,20 +27,25 @@ public class NodeInfoEditProxy {
     private final Button reloadNodeValueButton;
     private final Button saveNodeValueButton;
     private final ZkClientWrap zkClientWrap;
+    private final TextField zkPatDecodeTextField;
     public ThreadLocal<SimpleDateFormat> simpleDateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    @Getter
+    private TreeItem<ZkNode> currentTreeItem;
 
     public NodeInfoEditProxy(ZkClientWrap zkClientWrap,
                              TextArea zkNodeDataTextArea,
                              TextField zkPathTextField,
                              TextArea zkNodeStatTextArea,
                              Button reloadNodeValueButton,
-                             Button saveNodeValueButton) {
+                             Button saveNodeValueButton,
+                             TextField zkPatDecodeTextField) {
         this.zkClientWrap = zkClientWrap;
         this.zkNodeDataTextArea = zkNodeDataTextArea;
         this.zkPathTextField = zkPathTextField;
         this.zkNodeStatTextArea = zkNodeStatTextArea;
         this.reloadNodeValueButton = reloadNodeValueButton;
         this.saveNodeValueButton = saveNodeValueButton;
+        this.zkPatDecodeTextField = zkPatDecodeTextField;
     }
 
     public void init() {
@@ -46,22 +55,26 @@ public class NodeInfoEditProxy {
 
     public void updateDate(String nodePath) {
         zkPathTextField.setText(nodePath);
+        try {
+            zkPatDecodeTextField.setText(URLDecoder.decode(nodePath, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            zkPatDecodeTextField.setText("");
+        }
         Stat stat = new Stat();
         String value = zkClientWrap.readData(nodePath, stat);
         zkNodeDataTextArea.setText(String.valueOf(value));
         zkNodeStatTextArea.setText(formatStat(stat));
     }
 
-    public void reloadInfo(ZkNode value) {
-        if (value == null) {
+    public void disabledComponent(boolean disabled) {
+        if (disabled) {
             reloadNodeValueButton.setDisable(true);
-            zkNodeDataTextArea.setText("");
             zkNodeDataTextArea.setDisable(true);
-            zkNodeStatTextArea.setText("");
-            zkPathTextField.setText("");
+            zkNodeStatTextArea.setDisable(true);
         } else {
             zkNodeDataTextArea.setDisable(false);
             reloadNodeValueButton.setDisable(false);
+            zkNodeStatTextArea.setDisable(false);
         }
     }
 
@@ -69,6 +82,11 @@ public class NodeInfoEditProxy {
         zkPathTextField.setText("");
         zkNodeDataTextArea.setText("");
         zkNodeStatTextArea.setText("");
+        zkPatDecodeTextField.setText("");
+    }
+
+    public void setCurrentTreeItem(TreeItem<ZkNode> newValue) {
+        this.currentTreeItem = newValue;
     }
 
     private String formatStat(Stat stat) {
@@ -100,18 +118,20 @@ public class NodeInfoEditProxy {
     }
 
     private void installReloadDataAction() {
-        reloadNodeValueButton.setOnMouseClicked(event -> {
-            saveNodeValueButton.setDisable(true);
+        reloadNodeValueButton.setOnAction(event -> {
+            TreeItem<ZkNode> currentTreeItem = getCurrentTreeItem();
+            if (currentTreeItem != null) {
+                updateDate(currentTreeItem.getValue()
+                                          .getPath());
+            }
         });
     }
 
     private void installSaveDataAction(ZkClientWrap zkClientWrap) {
-
-        saveNodeValueButton.setOnMouseClicked(event -> {
+        saveNodeValueButton.setOnAction(event -> {
             log.info("点击保存准备保存zk数据 " + zkPathTextField.getText() + "  " + zkNodeDataTextArea.getText());
             String value = zkNodeDataTextArea.getText();
             zkClientWrap.writeData(zkPathTextField.getText(), value);
-            saveNodeValueButton.setDisable(true);
         });
     }
 }

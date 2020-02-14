@@ -2,6 +2,7 @@ package com.xin;
 
 import com.xin.util.AlertUtils;
 import com.xin.view.zktreeview.ArrowChangeListener;
+import javafx.application.Platform;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkDataListener;
@@ -15,6 +16,8 @@ import org.apache.zookeeper.data.Stat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author linxixin@cvte.com
@@ -24,6 +27,7 @@ import java.util.List;
 public class ZkClientWrap {
     @Getter
     private final ZkClient zkClient;
+    private ExecutorService async = Executors.newFixedThreadPool(2);
 
     public ZkClientWrap(ZkClient zkClient) {
         this.zkClient = zkClient;
@@ -133,7 +137,14 @@ public class ZkClientWrap {
     }
 
     public void writeData(String path, String value) {
-        zkClient.writeData(path, value);
+        async.submit(() -> {
+            try {
+                zkClient.writeData(path, value);
+            } catch (Exception e) {
+                log.error("写入zk异常 " + path + " " + value + " ", e);
+                Platform.runLater(() -> AlertUtils.showErrorAlert("提示", "写入zk异常 " + path + " " + value + " " + e.toString()));
+            }
+        });
     }
 
     public void close() {

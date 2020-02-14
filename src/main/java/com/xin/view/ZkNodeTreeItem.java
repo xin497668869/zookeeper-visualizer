@@ -28,7 +28,7 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
 
     @Getter
     @Setter
-    private boolean hide = false;
+    private boolean show = true;
     @Getter
     private List<TreeItem<ZkNode>> sources = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
     public void updateShowTreeItems() {
         getChildren().clear();
         for (TreeItem<ZkNode> source : sources) {
-            if (!((ZkNodeTreeItem) source).isHide()) {
+            if (((ZkNodeTreeItem) source).isShow()) {
                 getChildren().add(source);
             }
         }

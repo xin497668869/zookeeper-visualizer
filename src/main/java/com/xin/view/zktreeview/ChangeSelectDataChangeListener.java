@@ -3,7 +3,6 @@ package com.xin.view.zktreeview;
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
 import com.xin.view.NodeInfoEditProxy;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -24,7 +23,6 @@ public class ChangeSelectDataChangeListener implements ChangeListener<TreeItem<Z
         @Override
         public void handleDataChange(String dataPath, Object data) {
             nodeInfoEditProxy.updateDate(dataPath);
-            updateNodeValue(dataPath);
         }
 
         @Override
@@ -40,22 +38,20 @@ public class ChangeSelectDataChangeListener implements ChangeListener<TreeItem<Z
 
     @Override
     public void changed(ObservableValue<? extends TreeItem<ZkNode>> observable, TreeItem<ZkNode> oldValue, TreeItem<ZkNode> newValue) {
+        nodeInfoEditProxy.setCurrentTreeItem(newValue);
         if (oldValue != null) {
             zkClientWrap.unsubscribeDataChanges(oldValue.getValue()
                                                         .getPath(), listener);
         }
+        nodeInfoEditProxy.disabledComponent(newValue == null);
         if (newValue != null) {
             zkClientWrap.subscribeDataChanges(newValue.getValue()
                                                       .getPath(), listener);
 
-            updateNodeValue(newValue.getValue()
-                                    .getPath());
+            nodeInfoEditProxy.updateDate(newValue.getValue()
+                                                 .getPath());
         }
 
-    }
-
-    private void updateNodeValue(String nodePath) {
-        Platform.runLater(() -> nodeInfoEditProxy.updateDate(nodePath));
     }
 
 }

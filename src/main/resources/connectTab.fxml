@@ -38,6 +38,14 @@
                 </BorderPane>
                 <BorderPane>
                     <left>
+                        <Label text=" decode : " BorderPane.alignment="CENTER"/>
+                    </left>
+                    <center>
+                        <TextField editable="false" fx:id="zkPatDecodeTextField"/>
+                    </center>
+                </BorderPane>
+                <BorderPane>
+                    <left>
                         <Label prefHeight="15.0" prefWidth="59.0" text="节点信息:" BorderPane.alignment="CENTER">
                             <BorderPane.margin>
                                 <Insets bottom="2" left="1" top="5"/>

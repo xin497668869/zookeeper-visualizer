@@ -54,7 +54,9 @@ public class ZkTab extends Tab {
         Node node1 = ((SplitPane) contentNode.lookup(SPLIT_PANE)).getItems()
                                                                  .get(1);
         TextArea zkNodeDataTextArea = (TextArea) node1.lookup("#zkNodeDataTextArea");
+
         TextField zkPathTextField = (TextField) node1.lookup("#zkPathTextField");
+        TextField zkPatDecodeTextField = (TextField) node1.lookup("#zkPatDecodeTextField");
         TextArea zkNodeStatTextArea = (TextArea) node1.lookup("#zkNodeStatTextArea");
         Button reloadNodeValueButton = (Button) node1.lookup("#reloadNodeValueButton");
         Button saveNodeValueButton = (Button) node1.lookup("#saveNodeValueButton");
@@ -66,7 +68,9 @@ public class ZkTab extends Tab {
                                                   zkPathTextField,
                                                   zkNodeStatTextArea,
                                                   reloadNodeValueButton,
-                                                  saveNodeValueButton);
+                                                  saveNodeValueButton,
+                                                  zkPatDecodeTextField);
+        nodeInfoEditProxy.init();
     }
 
     public void init(ZkClientWrap zkClientWrap) {
@@ -75,8 +79,6 @@ public class ZkTab extends Tab {
             Parent parent = buildUi(zkClientWrap);
 
             initField(parent, zkClientWrap);
-
-            triggerWhenSelect();
 
             installZkStateChange(zkClientWrap);
 
@@ -104,21 +106,6 @@ public class ZkTab extends Tab {
         this.zkClientWrap = zkClientWrap;
         setContent(stackPane);
         return parent;
-    }
-
-    private void triggerWhenSelect() {
-        /**
-         * 当焦点不在节点上的时候需要清空数据, 灰化按钮
-         */
-        treeView.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        nodeInfoEditProxy.reloadInfo(newValue.getValue());
-                    } else {
-                        nodeInfoEditProxy.selectNoNode();
-                    }
-                });
     }
 
     private void installZkStateChange(ZkClientWrap zkClientWrap) {
