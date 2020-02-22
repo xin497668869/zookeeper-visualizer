@@ -1,10 +1,12 @@
 package com.xin.controller;
 
+import com.xin.ZkConfService;
 import com.xin.ZkConfService.ZkConf;
+import com.xin.view.conf.ZkConfListView;
+import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
@@ -20,63 +22,74 @@ import java.util.ResourceBundle;
  */
 public class ConfSettingController implements Initializable {
 
-    public TextField  idTextField;
-    public TextField  nameTextField;
-    public TextField  addressTextField;
+    public TextField nameTextField;
+    public TextField addressTextField;
     public BorderPane root;
-    public Button     createConfButton;
-    public Button     testConnectButton;
-    public Text       testResultMsg;
+    public Button createConfButton;
+    public Button testConnectButton;
+    public Text testResultMsg;
+    private ZkConf zkConf;
+    private ZkConfListView zkConfListView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
-    public void onClickToCreateSetting(MouseEvent mouseEvent) {
-        ZkConf zkConf = new ZkConf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
-        createConfButton.getScene()
-                        .setUserData(zkConf);
+    public void onClickToCreateConf(MouseEvent mouseEvent) {
+        zkConf.setAddress(addressTextField.getText());
+        zkConf.setName(nameTextField.getText());
+        ZkConfService.getService()
+                     .saveZkConf(zkConf, zkConfListView);
         Stage window = (Stage) createConfButton.getScene()
                                                .getWindow();
         window.close();
     }
 
-    public void onClickToTestConnectSetting(MouseEvent mouseEvent) {
+    public void onClickToTestConnect(MouseEvent mouseEvent) {
         testConnectButton.setDisable(true);
 
         testResultMsg.setText("连接中...");
-        ZkConf zkConf = new ZkConf(idTextField.getText(), nameTextField.getText(), addressTextField.getText());
 
         new Thread(() -> {
-            boolean isSuccess = true;
             ZkClient zkClient = null;
             try {
-                zkClient = new ZkClient(zkConf.getAddress(), 5000);
+                zkClient = new ZkClient(addressTextField.getText(), 5000);
                 zkClient.connection();
+                Platform.runLater(() -> {
+                    testResultMsg.setText("连接成功！");
+                });
             } catch (Exception e) {
-                isSuccess = false;
-                testResultMsg.setText("连接失败！");
-                if (testConnectButton.isDisabled()) {
-                    testConnectButton.setDisable(false);
-                }
-            }finally {
-                if (zkClient != null){
+                Platform.runLater(() -> {
+                    testResultMsg.setText("连接失败！" + e.toString());
+                    if (testConnectButton.isDisabled()) {
+                        testConnectButton.setDisable(false);
+                    }
+                });
+            } finally {
+                if (zkClient != null) {
                     zkClient.close();
                 }
-            }
-            if (isSuccess) {
-                testResultMsg.setText("连接成功！");
             }
         }).start();
     }
 
-    public void onInputTextChanged(KeyEvent event){
-        if(!testResultMsg.getText().isEmpty()){
-            testResultMsg.setText("");
-        }
-        if (testConnectButton.isDisabled()){
-            testConnectButton.setDisable(false);
-        }
+    public void init(ZkConfListView zkConfListView) {
+        this.zkConfListView = zkConfListView;
+        this.zkConf = new ZkConf();
+        this.zkConf.setAddress("localhost:2181");
+        initComponent();
+    }
+
+    public void init(ZkConf zkConf, ZkConfListView zkConfListView) {
+        this.zkConfListView = zkConfListView;
+        this.zkConf = zkConf;
+        initComponent();
+    }
+
+    private void initComponent() {
+        this.nameTextField.setText(zkConf.getName());
+        this.addressTextField.setText(zkConf.getAddress());
+
     }
 }

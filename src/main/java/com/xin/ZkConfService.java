@@ -1,9 +1,11 @@
 package com.xin;
 
 import com.alibaba.fastjson.JSON;
+import com.xin.controller.ConfSettingController;
+import com.xin.view.FXMLDialog;
+import com.xin.view.conf.ZkConfListView;
 import javafx.scene.control.ListView;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -28,6 +30,21 @@ public class ZkConfService {
 
     public static ZkConfService getService() {
         return zkConfService;
+    }
+
+    public static void createSaveUi(ZkConf zkConf, ZkConfListView zkConfListView) {
+        FXMLDialog<ConfSettingController> fxmlDialog = new FXMLDialog<>("/confSetting.fxml");
+        fxmlDialog.init();
+        ConfSettingController controller = fxmlDialog.getController();
+        if (zkConf == null) {
+            fxmlDialog.setTitle("创建连接");
+            controller.init(zkConfListView);
+        } else {
+            controller.init(zkConf, zkConfListView);
+            fxmlDialog.setTitle("修改连接");
+        }
+        fxmlDialog.show();
+
     }
 
     public int saveZkConf(ZkConf zkConf, ListView<ZkConf> confListView) {
@@ -85,11 +102,14 @@ public class ZkConfService {
     }
 
     @Data
-    @NoArgsConstructor
     public static class ZkConf implements Serializable {
         private String id;
         private String name;
         private String address;
+
+        public ZkConf() {
+            this(null, "", "");
+        }
 
         public ZkConf(String id, String name, String address) {
             if (id == null || id.isEmpty()) {

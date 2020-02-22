@@ -9,6 +9,7 @@ import com.xin.view.ZkNodeTreeItem;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +30,14 @@ public class ZkTreeView extends TreeView<ZkNode> {
         ZkNodeTreeItem rootZkNodeTreeItem = initRootItem();
 
         setCellFactory(param -> new ZkNodeTreeCell(this, zkClientWrap));
-
+        setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                TreeItem<ZkNode> selectedItem = getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    selectedItem.setExpanded(!selectedItem.isExpanded());
+                }
+            }
+        });
         selectToDataChangeListener = new ChangeSelectDataChangeListener(zkClient, nodeInfoEditProxy);
 
         getSelectionModel().selectedItemProperty()

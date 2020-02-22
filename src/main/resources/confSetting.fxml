@@ -11,33 +11,36 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-
 <BorderPane fx:id="root" maxWidth="350.0" minHeight="200.0" minWidth="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xin.controller.ConfSettingController">
     <center>
         <GridPane prefHeight="150.0" prefWidth="320.0" BorderPane.alignment="CENTER">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.0" minWidth="10.0" prefWidth="82.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="236.0" minWidth="10.0" prefWidth="236.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="236.0" minWidth="10.0" prefWidth="236.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <BorderPane.margin>
-                <Insets left="20.0" right="20.0" top="20.0" />
+                <Insets left="20.0" right="20.0" top="20.0"/>
             </BorderPane.margin>
-            <TextField fx:id="idTextField" visible="false" GridPane.columnIndex="1" />
-            <TextField fx:id="nameTextField" text="新连接" onKeyReleased="#onInputTextChanged" GridPane.columnIndex="1" />
-            <TextField fx:id="addressTextField" text="localhost:2181" onKeyReleased="#onInputTextChanged" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="nameTextField" text="新连接" GridPane.columnIndex="1"/>
+            <TextField fx:id="addressTextField" text="localhost:2181" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
             <HBox alignment="CENTER">
-                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" text="名称" />
+                <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" text="名称"/>
             </HBox>
             <HBox alignment="CENTER" GridPane.rowIndex="1">
-                <Label text="地址" />
+                <Label text="地址"/>
             </HBox>
-            <Button fx:id="createConfButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#onClickToCreateSetting" prefHeight="23.0" prefWidth="113.0" text="确定" textAlignment="CENTER" translateX="50.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="testConnectButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#onClickToTestConnectSetting" prefHeight="23.0" text="测试连接" textAlignment="CENTER" translateX="10.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" GridPane.rowSpan="2147483647" />
+            <Button fx:id="createConfButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
+                    onMouseClicked="#onClickToCreateConf" prefHeight="23.0" prefWidth="113.0" text="确定"
+                    textAlignment="CENTER" translateX="50.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Button fx:id="testConnectButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
+                    onMouseClicked="#onClickToTestConnect" prefHeight="23.0" text="测试连接" textAlignment="CENTER"
+                    translateX="10.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2"
+                    GridPane.rowSpan="2147483647"/>
         </GridPane>
     </center>
     <bottom>

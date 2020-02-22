@@ -96,9 +96,9 @@ public class ZkConfListView extends ListView<ZkConf> {
         menuItem1.setOnAction(event -> {
             ZkConf selectedItem = getSelectionModel()
                     .getSelectedItem();
-            ZkConfService.getService()
-                         .saveZkConf(selectedItem, this);
+            ZkConfService.createSaveUi(selectedItem, this);
         });
+
         MenuItem menuItem2 = new MenuItem("删除");
         menuItem2.setOnAction(event -> {
             ZkConf selectedItem = getSelectionModel()

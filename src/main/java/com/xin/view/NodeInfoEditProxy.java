@@ -2,6 +2,7 @@ package com.xin.view;
 
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -54,28 +55,32 @@ public class NodeInfoEditProxy {
     }
 
     public void updateDate(String nodePath) {
-        zkPathTextField.setText(nodePath);
-        try {
-            zkPatDecodeTextField.setText(URLDecoder.decode(nodePath, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            zkPatDecodeTextField.setText("");
-        }
         Stat stat = new Stat();
         String value = zkClientWrap.readData(nodePath, stat);
-        zkNodeDataTextArea.setText(String.valueOf(value));
-        zkNodeStatTextArea.setText(formatStat(stat));
+        Platform.runLater(() -> {
+            zkPathTextField.setText(nodePath);
+            try {
+                zkPatDecodeTextField.setText(URLDecoder.decode(nodePath, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                zkPatDecodeTextField.setText("");
+            }
+            zkNodeDataTextArea.setText(String.valueOf(value));
+            zkNodeStatTextArea.setText(formatStat(stat));
+        });
     }
 
     public void disabledComponent(boolean disabled) {
-        if (disabled) {
-            reloadNodeValueButton.setDisable(true);
-            zkNodeDataTextArea.setDisable(true);
-            zkNodeStatTextArea.setDisable(true);
-        } else {
-            zkNodeDataTextArea.setDisable(false);
-            reloadNodeValueButton.setDisable(false);
-            zkNodeStatTextArea.setDisable(false);
-        }
+        Platform.runLater(() -> {
+            if (disabled) {
+                reloadNodeValueButton.setDisable(true);
+                zkNodeDataTextArea.setDisable(true);
+                zkNodeStatTextArea.setDisable(true);
+            } else {
+                zkNodeDataTextArea.setDisable(false);
+                reloadNodeValueButton.setDisable(false);
+                zkNodeStatTextArea.setDisable(false);
+            }
+        });
     }
 
     public void selectNoNode() {

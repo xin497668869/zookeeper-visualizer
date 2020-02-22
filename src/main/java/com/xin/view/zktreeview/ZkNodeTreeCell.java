@@ -86,14 +86,10 @@ public class ZkNodeTreeCell extends TreeCell<ZkNode> {
             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
         }
 
+
         setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                TreeItem<ZkNode> selectedItem = getSelectionModel().getSelectedItem();
-                if (selectedItem != null) {
-                    selectedItem.setExpanded(!selectedItem.isExpanded());
-                }
-                System.out.println("Double clicked");
-                event.consume();
+                triggertExpand();
             }
         });
 //        treeItemDoubleClick();
@@ -102,6 +98,13 @@ public class ZkNodeTreeCell extends TreeCell<ZkNode> {
     @Override
     protected Skin<?> createDefaultSkin() {
         return new TreeCellSkin<>(this);
+    }
+
+    private void triggertExpand() {
+        TreeItem<ZkNode> selectedItem = getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            selectedItem.setExpanded(!selectedItem.isExpanded());
+        }
     }
 
     private void treeItemDoubleClick() {

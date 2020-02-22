@@ -57,7 +57,6 @@ public class RootController implements Initializable {
             });
 
             zkConfListView.installConnectTrigger(connectTabPane);
-            ;
 
             installConfSearchFilter();
 
@@ -88,10 +87,8 @@ public class RootController implements Initializable {
     }
 
     public void newConnBtnAction() {
-        log.info("aaaa newConnBtnAction");
+        ZkConfService.createSaveUi(null, zkConfListView);
     }
-
-
 
 
 }

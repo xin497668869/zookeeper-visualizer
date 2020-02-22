@@ -51,11 +51,16 @@ import java.util.function.Predicate;
  */
 public final class SearchFilterObservalbeList<E> extends TransformationList<E, E> {
 
+    private static final Predicate ALWAYS_TRUE = t -> true;
     private int[] filtered;
     private int size;
-
     private SortHelper helper;
-    private static final Predicate ALWAYS_TRUE = t -> true;
+    /**
+     * The predicate that will match the elements that will be in this FilteredList.
+     * Elements not matching the predicate will be filtered-out.
+     * Null predicate means "always true" predicate, all elements will be matched.
+     */
+    private ObjectProperty<Predicate<? super E>> predicate;
 
     /**
      * Constructs a new FilteredList wrapper around the source list.
@@ -91,21 +96,9 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
         this(source, null);
     }
 
-    /**
-     * The predicate that will match the elements that will be in this FilteredList.
-     * Elements not matching the predicate will be filtered-out.
-     * Null predicate means "always true" predicate, all elements will be matched.
-     */
-    private ObjectProperty<Predicate<? super E>> predicate;
-
     public final ObjectProperty<Predicate<? super E>> predicateProperty() {
         if (predicate == null) {
             predicate = new ObjectPropertyBase<Predicate<? super E>>() {
-                @Override
-                protected void invalidated() {
-                    refilter();
-                }
-
                 @Override
                 public Object getBean() {
                     return SearchFilterObservalbeList.this;
@@ -114,6 +107,11 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
                 @Override
                 public String getName() {
                     return "predicate";
+                }
+
+                @Override
+                protected void invalidated() {
+                    refilter();
                 }
 
             };
@@ -129,11 +127,63 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
         predicateProperty().set(predicate);
     }
 
-    private Predicate<? super E> getPredicateImpl() {
-        if (getPredicate() != null) {
-            return getPredicate();
+    /**
+     * Returns the number of elements in this list.
+     *
+     * @return the number of elements in this list
+     */
+    @Override
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Returns the element at the specified position in this list.
+     *
+     * @param index index of the element to return
+     * @return the element at the specified position in this list
+     * @throws IndexOutOfBoundsException {@inheritDoc}
+     */
+    @Override
+    public E get(int index) {
+        if (index >= size) {
+            throw new IndexOutOfBoundsException();
         }
-        return ALWAYS_TRUE;
+        return getSource().get(filtered[index]);
+    }
+
+    @Override
+    public void add(int index, E element) {
+        ObservableList<E> source = (ObservableList<E>) getSource();
+        source.add(index, element);
+    }
+
+    @Override
+    public E remove(int index) {
+        ObservableList<E> source = (ObservableList<E>) getSource();
+        return source.remove(index);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void refilter() {
+        ensureSize(getSource().size());
+        List<E> removed = null;
+        if (hasListeners()) {
+            removed = new ArrayList<>(this);
+        }
+        size = 0;
+        int i = 0;
+        Predicate<? super E> pred = getPredicateImpl();
+        for (Iterator<? extends E> it = getSource().iterator(); it.hasNext(); ) {
+            final E next = it.next();
+            if (pred.test(next)) {
+                filtered[size++] = i;
+            }
+            ++i;
+        }
+        if (hasListeners()) {
+            fireChange(new GenericAddRemoveChange<>(0, size, removed, this));
+        }
     }
 
     @Override
@@ -151,37 +201,19 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
         endChange();
     }
 
-    /**
-     * Returns the number of elements in this list.
-     *
-     * @return the number of elements in this list
-     */
-    @Override
-    public int size() {
-        return size;
-    }
-
-    /**
-     * Returns the element at the specified position in this list.
-     *
-     * @param  index index of the element to return
-     * @return the element at the specified position in this list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
-     */
-    @Override
-    public E get(int index) {
-        if (index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-        return getSource().get(filtered[index]);
-    }
-
     @Override
     public int getSourceIndex(int index) {
         if (index >= size) {
             throw new IndexOutOfBoundsException();
         }
         return filtered[index];
+    }
+
+    private Predicate<? super E> getPredicateImpl() {
+        if (getPredicate() != null) {
+            return getPredicate();
+        }
+        return ALWAYS_TRUE;
     }
 
     private SortHelper getSortHelper() {
@@ -205,11 +237,10 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
         return pos;
     }
 
-
     @SuppressWarnings("unchecked")
     private void ensureSize(int size) {
         if (filtered.length < size) {
-            int[] replacement = new int[size * 3/2 + 1];
+            int[] replacement = new int[size * 3 / 2 + 1];
             System.arraycopy(filtered, 0, replacement, 0, this.size);
             filtered = replacement;
         }
@@ -243,7 +274,8 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
 
         // Mark the nodes that are going to be removed
         for (int i = from; i < to; ++i) {
-            nextRemove(from, c.getRemoved().get(filtered[i] - c.getFrom()));
+            nextRemove(from, c.getRemoved()
+                              .get(filtered[i] - c.getFrom()));
         }
 
         // Update indexes of the sublist following the last element that was removed
@@ -313,28 +345,6 @@ public final class SearchFilterObservalbeList<E> extends TransformationList<E, E
                 }
             }
             sourceFrom++;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void refilter() {
-        ensureSize(getSource().size());
-        List<E> removed = null;
-        if (hasListeners()) {
-            removed = new ArrayList<>(this);
-        }
-        size = 0;
-        int i = 0;
-        Predicate<? super E> pred = getPredicateImpl();
-        for (Iterator<? extends E> it = getSource().iterator(); it.hasNext(); ) {
-            final E next = it.next();
-            if (pred.test(next)) {
-                filtered[size++] = i;
-            }
-            ++i;
-        }
-        if (hasListeners()) {
-            fireChange(new GenericAddRemoveChange<>(0, size, removed, this));
         }
     }
 

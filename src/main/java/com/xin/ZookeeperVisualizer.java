@@ -22,11 +22,14 @@ public class ZookeeperVisualizer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.setProperty("jute.maxbuffer", String.valueOf(5120 * 1024));
         try {
             BorderPane root = FXMLLoader.load(getClass().getResource("/root.fxml"));
 
             primaryStage.setTitle("zookeeper-visualizer");
-            primaryStage.getIcons().add(new Image(ZookeeperVisualizer.class.getClassLoader().getResourceAsStream("icons/root.png")));
+            primaryStage.getIcons()
+                        .add(new Image(ZookeeperVisualizer.class.getClassLoader()
+                                                                .getResourceAsStream("icons/root.png")));
             Scene scene = new Scene(root);
 
             primaryStage.setScene(scene);
@@ -35,6 +38,5 @@ public class ZookeeperVisualizer extends Application {
             e.printStackTrace();
         }
     }
-
 
 }
