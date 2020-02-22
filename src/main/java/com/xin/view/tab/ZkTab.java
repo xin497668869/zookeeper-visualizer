@@ -56,7 +56,6 @@ public class ZkTab extends Tab {
         TextArea zkNodeDataTextArea = (TextArea) node1.lookup("#zkNodeDataTextArea");
 
         TextField zkPathTextField = (TextField) node1.lookup("#zkPathTextField");
-        TextField zkPatDecodeTextField = (TextField) node1.lookup("#zkPatDecodeTextField");
         TextArea zkNodeStatTextArea = (TextArea) node1.lookup("#zkNodeStatTextArea");
         Button reloadNodeValueButton = (Button) node1.lookup("#reloadNodeValueButton");
         Button saveNodeValueButton = (Button) node1.lookup("#saveNodeValueButton");
@@ -68,8 +67,7 @@ public class ZkTab extends Tab {
                                                   zkPathTextField,
                                                   zkNodeStatTextArea,
                                                   reloadNodeValueButton,
-                                                  saveNodeValueButton,
-                                                  zkPatDecodeTextField);
+                                                  saveNodeValueButton);
         nodeInfoEditProxy.init();
     }
 
@@ -94,7 +92,7 @@ public class ZkTab extends Tab {
 
     private Parent buildUi(ZkClientWrap zkClientWrap) throws IOException {
         Parent parent;
-        parent = FXMLLoader.load(getClass().getResource("/connectTab.fxml"));
+        parent = FXMLLoader.load(getClass().getResource("/fxml/connectTab.fxml"));
 
         StackPane stackPane = new StackPane();
         stackPane.setPadding(new Insets(10, 0, 0, 0));

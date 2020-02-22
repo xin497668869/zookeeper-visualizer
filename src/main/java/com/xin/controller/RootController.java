@@ -1,12 +1,14 @@
 package com.xin.controller;
 
 import com.xin.ZkConfService;
+import com.xin.util.AlertUtils;
 import com.xin.util.FuzzyMatchUtils;
 import com.xin.util.StringUtil;
 import com.xin.view.conf.SearchFilterObservalbeList;
 import com.xin.view.conf.ZkConfListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
@@ -17,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.HyperlinkLabel;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -72,6 +75,32 @@ public class RootController implements Initializable {
 
     public void newConnBtnAction() {
         ZkConfService.createSaveUi(null, zkConfListView);
+    }
+
+    public void openLogFiles(ActionEvent actionEvent) {
+        File file = new File("logs/zookeeper-visualizer.log");
+        try {
+            Desktop.getDesktop()
+                   .open(new File(file.getAbsolutePath()));
+        } catch (Exception e) {
+            log.error("打开日志文件异常", e);
+            try {
+                Desktop.getDesktop()
+                       .open(file.getParentFile());
+            } catch (Exception ex) {
+                AlertUtils.showErrorAlert("打开日志失败 ", "日志目录" + file.getPath() + " error" + e.toString());
+                log.error("打开日志目录异常", ex);
+            }
+        }
+    }
+
+    public void openIssues(ActionEvent actionEvent) {
+        try {
+            Desktop.getDesktop()
+                   .browse(new URI("https://github.com/xin497668869/zookeeper-visualizer/issues/new"));
+        } catch (Exception e) {
+            log.error("打开issues失败", e);
+        }
     }
 
     private void installConfSearchFilter() {

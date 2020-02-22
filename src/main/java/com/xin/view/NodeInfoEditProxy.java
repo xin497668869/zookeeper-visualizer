@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.data.Stat;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,7 +26,6 @@ public class NodeInfoEditProxy {
     private final Button reloadNodeValueButton;
     private final Button saveNodeValueButton;
     private final ZkClientWrap zkClientWrap;
-    private final TextField zkPatDecodeTextField;
     public ThreadLocal<SimpleDateFormat> simpleDateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     @Getter
     private TreeItem<ZkNode> currentTreeItem;
@@ -38,15 +35,14 @@ public class NodeInfoEditProxy {
                              TextField zkPathTextField,
                              TextArea zkNodeStatTextArea,
                              Button reloadNodeValueButton,
-                             Button saveNodeValueButton,
-                             TextField zkPatDecodeTextField) {
+                             Button saveNodeValueButton) {
         this.zkClientWrap = zkClientWrap;
         this.zkNodeDataTextArea = zkNodeDataTextArea;
         this.zkPathTextField = zkPathTextField;
         this.zkNodeStatTextArea = zkNodeStatTextArea;
         this.reloadNodeValueButton = reloadNodeValueButton;
         this.saveNodeValueButton = saveNodeValueButton;
-        this.zkPatDecodeTextField = zkPatDecodeTextField;
+//        this.zkPatDecodeTextField = zkPatDecodeTextField;
     }
 
     public void init() {
@@ -59,11 +55,6 @@ public class NodeInfoEditProxy {
         String value = zkClientWrap.readData(nodePath, stat);
         Platform.runLater(() -> {
             zkPathTextField.setText(nodePath);
-            try {
-                zkPatDecodeTextField.setText(URLDecoder.decode(nodePath, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                zkPatDecodeTextField.setText("");
-            }
             zkNodeDataTextArea.setText(String.valueOf(value));
             zkNodeStatTextArea.setText(formatStat(stat));
         });
@@ -87,7 +78,6 @@ public class NodeInfoEditProxy {
         zkPathTextField.setText("");
         zkNodeDataTextArea.setText("");
         zkNodeStatTextArea.setText("");
-        zkPatDecodeTextField.setText("");
     }
 
     public void setCurrentTreeItem(TreeItem<ZkNode> newValue) {

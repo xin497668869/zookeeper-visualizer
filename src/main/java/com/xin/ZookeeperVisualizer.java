@@ -24,7 +24,7 @@ public class ZookeeperVisualizer extends Application {
     public void start(Stage primaryStage) {
         System.setProperty("jute.maxbuffer", String.valueOf(5120 * 1024));
         try {
-            BorderPane root = FXMLLoader.load(getClass().getResource("/root.fxml"));
+            BorderPane root = FXMLLoader.load(getClass().getResource("/fxml/root.fxml"));
 
             primaryStage.setTitle("zookeeper-visualizer");
             primaryStage.getIcons()

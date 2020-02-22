@@ -24,7 +24,7 @@ import java.util.UUID;
  */
 @Slf4j
 public class ZkConfService {
-    public static final String CONF_FILE_NAME = "conf";
+    public static final String CONF_FILE_NAME = "zkSetting.txt";
     public static ZkConfService zkConfService = new ZkConfService();
     private static List<ZkConf> zkConfs;
 
@@ -33,7 +33,7 @@ public class ZkConfService {
     }
 
     public static void createSaveUi(ZkConf zkConf, ZkConfListView zkConfListView) {
-        FXMLDialog<ConfSettingController> fxmlDialog = new FXMLDialog<>("/confSetting.fxml");
+        FXMLDialog<ConfSettingController> fxmlDialog = new FXMLDialog<>("/fxml/confSetting.fxml");
         fxmlDialog.init();
         ConfSettingController controller = fxmlDialog.getController();
         if (zkConf == null) {

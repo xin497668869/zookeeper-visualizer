@@ -31,6 +31,10 @@
                 <Menu text="编辑">
                     <MenuItem text="新建连接" fx:id="newConnBtn" onAction="#newConnBtnAction"/>
                 </Menu>
+                <Menu text="帮助" onAction="#openLogFiles">
+                    <MenuItem text="查看日志" onAction="#openLogFiles"/>
+                    <MenuItem text="提需求/bug" onAction="#openIssues"/>
+                </Menu>
             </MenuBar>
 
         </VBox>

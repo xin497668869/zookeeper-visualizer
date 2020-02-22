@@ -219,7 +219,7 @@ public class ZkNodeTreeCell extends TreeCell<ZkNode> {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    Parent parent = FXMLLoader.load(getClass().getResource("/nodeAdd.fxml"));
+                    Parent parent = FXMLLoader.load(getClass().getResource("/fxml/nodeAdd.fxml"));
                     Label parentPathLabel = (Label) parent.lookup("#parentPathLabel");
                     TreeItem<ZkNode> selectedItem = getSelectionModel()
                             .getSelectedItem();
