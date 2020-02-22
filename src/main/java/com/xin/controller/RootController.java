@@ -66,6 +66,14 @@ public class RootController implements Initializable {
 
     }
 
+    public void exitBtnAction() {
+        Platform.exit();
+    }
+
+    public void newConnBtnAction() {
+        ZkConfService.createSaveUi(null, zkConfListView);
+    }
+
     private void installConfSearchFilter() {
         zkConfListView.setItems(new SearchFilterObservalbeList<>(FXCollections.observableArrayList(ZkConfService.getService()
                                                                                                                 .getZkConf()), zkConf -> {
@@ -81,14 +89,5 @@ public class RootController implements Initializable {
                            ((SearchFilterObservalbeList) zkConfListView.getItems()).refilter();
                        });
     }
-
-    public void exitBtnAction() {
-        Platform.exit();
-    }
-
-    public void newConnBtnAction() {
-        ZkConfService.createSaveUi(null, zkConfListView);
-    }
-
 
 }
