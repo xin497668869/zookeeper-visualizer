@@ -2,7 +2,7 @@ package com.xin.controller;
 
 import com.xin.ZkConfService;
 import com.xin.util.FuzzyMatchUtils;
-import com.xin.util.match.StringUtil;
+import com.xin.util.StringUtil;
 import com.xin.view.conf.SearchFilterObservalbeList;
 import com.xin.view.conf.ZkConfListView;
 import javafx.application.Platform;

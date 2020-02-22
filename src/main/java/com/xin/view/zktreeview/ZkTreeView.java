@@ -3,7 +3,7 @@ package com.xin.view.zktreeview;
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
 import com.xin.util.FuzzyMatchUtils;
-import com.xin.util.match.StringUtil;
+import com.xin.util.StringUtil;
 import com.xin.view.NodeInfoEditProxy;
 import com.xin.view.ZkNodeTreeItem;
 import javafx.event.EventHandler;
