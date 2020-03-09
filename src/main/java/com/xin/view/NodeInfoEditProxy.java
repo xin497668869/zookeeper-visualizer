@@ -86,16 +86,16 @@ public class NodeInfoEditProxy {
 
     private String formatStat(Stat stat) {
         return String.format("cZxid = %X\n" +
-                                     "ctime = %s\n" +
-                                     "mZxid = %X\n" +
-                                     "mtime = %s\n" +
-                                     "pZxid = %X\n" +
-                                     "cversion = %X\n" +
-                                     "dataVersion = %X\n" +
-                                     "aclVersion = %X\n" +
-                                     "ephemeralOwner = %X\n" +
-                                     "dataLength = %X\n" +
-                                     "numChildren = %X",
+                                     "\nctime = 0x%s\n" +
+                                     "mZxid = 0x%X\n" +
+                                     "mtime = 0x%s\n" +
+                                     "pZxid = 0x%X\n" +
+                                     "cversion = %d\n" +
+                                     "dataVersion = %d\n" +
+                                     "aclVersion = %d\n" +
+                                     "ephemeralOwner = 0x%X\n" +
+                                     "dataLength = %d\n" +
+                                     "numChildren = %d",
                              stat.getCzxid(),
                              simpleDateFormat.get()
                                              .format(new Date(stat.getCtime())),

@@ -150,4 +150,13 @@ public class ZkClientWrap {
     public void close() {
         zkClient.close();
     }
+
+    public void unsubscribeDataChanges(String path) {
+        try {
+            zkClient.unsubscribeDataChanges(path);
+        } catch (Exception e) {
+            AlertUtils.showErrorAlert("取消监听节点值变化异常", e.getMessage());
+            log.error("zkClient执行异常", e);
+        }
+    }
 }

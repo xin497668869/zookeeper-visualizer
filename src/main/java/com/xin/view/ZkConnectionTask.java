@@ -25,13 +25,7 @@ public class ZkConnectionTask extends Task<ZkClient> {
     @Override
     protected ZkClient call() throws Exception {
         zkClient = ZkUtils.getConnection(zkConf);
-        try {
-            zkClient.connection();
-        } catch (Exception e) {
-            e.printStackTrace();
-            zkClient.close();
-            throw e;
-        }
+
         return zkClient;
     }
 }

@@ -48,6 +48,7 @@ public class ZkConfListView extends ListView<ZkConf> {
                             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         } else {
                             setText("");
+                            setContextMenu(getCreateContextMenu());
                             addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         }
 
@@ -55,6 +56,18 @@ public class ZkConfListView extends ListView<ZkConf> {
                 };
             }
         });
+    }
+
+    private ContextMenu getCreateContextMenu() {
+        MenuItem menuItem1 = new MenuItem("新增连接");
+        menuItem1.setOnAction(event -> {
+            ZkConfService.createSaveUi(null, this);
+        });
+
+        ContextMenu cm = new ContextMenu();
+        cm.getItems()
+          .add(menuItem1);
+        return cm;
     }
 
     public void installConnectTrigger(TabPane connectTabPane) {

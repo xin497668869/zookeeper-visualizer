@@ -55,7 +55,7 @@ public class ConfSettingController implements Initializable {
             ZkClient zkClient = null;
             try {
                 zkClient = new ZkClient(addressTextField.getText(), 5000);
-                zkClient.connection();
+                zkClient.connect(5000, null);
                 Platform.runLater(() -> {
                     testResultMsg.setText("连接成功！");
                 });

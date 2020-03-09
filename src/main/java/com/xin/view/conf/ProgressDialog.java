@@ -45,10 +45,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.util.function.Consumer;
 
+@Slf4j
 public class ProgressDialog extends Dialog<Boolean> {
 
     @Getter
@@ -138,6 +140,7 @@ public class ProgressDialog extends Dialog<Boolean> {
                         end();
                         AlertTemplate.showTipAlert(false, "", "连接失败！\n " + zkConnectionTask.getException()
                                                                                            .getMessage());
+                        log.warn("连接异常", zkConnectionTask.getException());
                         return;
                     case SUCCEEDED:
                         end();

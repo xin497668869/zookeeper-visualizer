@@ -7,15 +7,11 @@ import javafx.scene.control.TreeItem;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.I0Itec.zkclient.IZkChildListener;
-import org.I0Itec.zkclient.IZkDataListener;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author linxixin@cvte.com
@@ -58,21 +54,11 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
         }
         for (TreeItem<ZkNode> nodeTreeItem : sources) {
 
-            Map<String, Set<IZkChildListener>> childListener = zkClientWrap.getZkClient()
-                                                                           .getChildListener();
             String path = nodeTreeItem.getValue()
                                       .getPath();
-            if (childListener.containsKey(path)) {
-                childListener.get(path)
-                             .clear();
-            }
+            zkClientWrap.unsubscribeChildChanges(path);
 
-            Map<String, Set<IZkDataListener>> dataListener = zkClientWrap.getZkClient()
-                                                                         .getDataListener();
-            if (dataListener.containsKey(path)) {
-                dataListener.get(path)
-                            .clear();
-            }
+            zkClientWrap.unsubscribeDataChanges(path);
 
             ((ZkNodeTreeItem) nodeTreeItem).closeChildren();
         }
@@ -142,21 +128,13 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
             }
         }
         if (findItem != null) {
-            Map<String, Set<IZkChildListener>> childListener = zkClientWrap.getZkClient()
-                                                                           .getChildListener();
+
             String path = findItem.getValue()
                                   .getPath();
-            if (childListener.containsKey(path)) {
-                childListener.get(path)
-                             .clear();
-            }
 
-            Map<String, Set<IZkDataListener>> dataListener = zkClientWrap.getZkClient()
-                                                                         .getDataListener();
-            if (dataListener.containsKey(path)) {
-                dataListener.get(path)
-                            .clear();
-            }
+            zkClientWrap.unsubscribeDataChanges(path);
+            zkClientWrap.unsubscribeChildChanges(path);
+
             sources.remove(findItem);
         }
     }

@@ -14,6 +14,10 @@ public class FuzzyMatchUtils {
     }
 
     private static boolean match(String name, String keyword, int nameIndex, int keywordIndex) {
+        if (keyword.length() > 10) {
+            //当key长度较大是, 使用contains可以加快匹配速度
+            return name.contains(keyword);
+        }
         if (nameIndex > name.length()
                 || name.length() - nameIndex < keyword.length() - keywordIndex) {
             return false;
