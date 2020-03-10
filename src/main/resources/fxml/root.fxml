@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -24,13 +23,6 @@
     <top>
         <VBox>
             <MenuBar>
-                <Menu text="文件">
-                    <SeparatorMenuItem/>
-                    <MenuItem text="退出" fx:id="exitBtn" onAction="#exitBtnAction"/>
-                </Menu>
-                <Menu text="编辑">
-                    <MenuItem text="新建连接" fx:id="newConnBtn" onAction="#newConnBtnAction"/>
-                </Menu>
                 <Menu text="帮助" onAction="#openLogFiles">
                     <MenuItem text="查看日志" onAction="#openLogFiles"/>
                     <MenuItem text="提需求/bug" onAction="#openIssues"/>

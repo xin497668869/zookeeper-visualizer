@@ -11,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.ResourceBundle;
  * @author linxixin@cvte.com
  * @since 1.0
  */
+@Slf4j
 public class ConfSettingController implements Initializable {
 
     public TextField nameTextField;
@@ -54,12 +56,10 @@ public class ConfSettingController implements Initializable {
         new Thread(() -> {
             ZkClient zkClient = null;
             try {
-                zkClient = new ZkClient(addressTextField.getText(), 5000);
-                zkClient.connect(5000, null);
-                Platform.runLater(() -> {
-                    testResultMsg.setText("连接成功！");
-                });
+                zkClient = new ZkClient(addressTextField.getText(), 5000, 5000);
+                Platform.runLater(() -> testResultMsg.setText("连接成功！"));
             } catch (Exception e) {
+                log.warn("连接异常", e);
                 Platform.runLater(() -> {
                     testResultMsg.setText("连接失败！" + e.toString());
                     if (testConnectButton.isDisabled()) {
