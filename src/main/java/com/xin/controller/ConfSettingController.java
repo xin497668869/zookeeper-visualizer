@@ -62,14 +62,15 @@ public class ConfSettingController implements Initializable {
                 log.warn("连接异常", e);
                 Platform.runLater(() -> {
                     testResultMsg.setText("连接失败！" + e.toString());
-                    if (testConnectButton.isDisabled()) {
-                        testConnectButton.setDisable(false);
-                    }
+
                 });
             } finally {
                 if (zkClient != null) {
                     zkClient.close();
                 }
+            }
+            if (testConnectButton.isDisabled()) {
+                testConnectButton.setDisable(false);
             }
         }).start();
     }
