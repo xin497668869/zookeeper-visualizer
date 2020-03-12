@@ -3,6 +3,8 @@ package com.xin.view;
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
 import com.xin.view.zktreeview.ArrowChangeListener;
+import com.xin.view.zktreeview.ZkTreeView;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ZkNodeTreeItem extends TreeItem<ZkNode> {
 
     private final ZkClientWrap zkClientWrap;
+    private final ZkTreeView zkTreeView;
 
     @Getter
     @Setter
@@ -28,10 +31,11 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
     @Getter
     private List<TreeItem<ZkNode>> sources = new ArrayList<>();
 
-    public ZkNodeTreeItem(ZkClientWrap zkClientWrap, ZkNode value) {
+    public ZkNodeTreeItem(ZkClientWrap zkClientWrap, ZkNode value, ZkTreeView zkTreeView) {
         super(value);
         ArrowChangeListener listener = new ArrowChangeListener(zkClientWrap, this);
         this.zkClientWrap = zkClientWrap;
+        this.zkTreeView = zkTreeView;
         this.expandedProperty()
             .addListener(listener);
     }
@@ -100,7 +104,7 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
             }
             ZkNode childNode = new ZkNode(path, childName);
             zkNode.addChild(childNode);
-            ZkNodeTreeItem treeItem = new ZkNodeTreeItem(zkClientWrap, childNode);
+            ZkNodeTreeItem treeItem = new ZkNodeTreeItem(zkClientWrap, childNode, zkTreeView);
             childNode.setTreeItem(treeItem);
 
             addChildren(treeItem);
@@ -108,6 +112,8 @@ public class ZkNodeTreeItem extends TreeItem<ZkNode> {
         updateShowTreeItems();
         sources.sort(Comparator.comparing(zkNodeTreeItem1 -> children.indexOf(zkNodeTreeItem1.getValue()
                                                                                              .getName())));
+        log.info("准备刷新节点");
+        Platform.runLater(zkTreeView::refresh);
     }
 
     private void addChildren(ZkNodeTreeItem treeItem) {

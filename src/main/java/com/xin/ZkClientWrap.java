@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
-import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.MyZkClient;
 import org.I0Itec.zkclient.exception.ZkInterruptedException;
 import org.I0Itec.zkclient.exception.ZkNodeExistsException;
 import org.apache.zookeeper.CreateMode;
@@ -26,10 +26,10 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class ZkClientWrap {
     @Getter
-    private final ZkClient zkClient;
+    private final MyZkClient zkClient;
     private ExecutorService async = Executors.newFixedThreadPool(2);
 
-    public ZkClientWrap(ZkClient zkClient) {
+    public ZkClientWrap(MyZkClient zkClient) {
         this.zkClient = zkClient;
     }
 

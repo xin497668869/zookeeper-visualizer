@@ -46,7 +46,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.MyZkClient;
 
 import java.util.function.Consumer;
 
@@ -56,9 +56,9 @@ public class ProgressDialog extends Dialog<Boolean> {
     @Getter
     private final ZkConf zkConf;
     @Getter
-    private Task<ZkClient> worker;
+    private Task<MyZkClient> worker;
 
-    public ProgressDialog(String text, ZkConf zkConf, Consumer<ZkClient> successRun) {
+    public ProgressDialog(String text, ZkConf zkConf, Consumer<MyZkClient> successRun) {
         this.zkConf = zkConf;
         final DialogPane dialogPane = getDialogPane();
 
@@ -120,7 +120,7 @@ public class ProgressDialog extends Dialog<Boolean> {
      * for {@link #showWorkerProgress(Worker)}.
      */
     private static class WorkerProgressPane extends Region {
-        private final Consumer<ZkClient> successRun;
+        private final Consumer<MyZkClient> successRun;
         private final ProgressDialog dialog;
         private final ProgressBar progressBar;
         private Worker<?> worker;
@@ -153,7 +153,7 @@ public class ProgressDialog extends Dialog<Boolean> {
             }
         };
 
-        public WorkerProgressPane(ProgressDialog dialog, Consumer<ZkClient> successRun) {
+        public WorkerProgressPane(ProgressDialog dialog, Consumer<MyZkClient> successRun) {
             this.successRun = successRun;
             this.dialog = dialog;
 

@@ -12,7 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.MyZkClient;
 
 import java.util.function.Consumer;
 
@@ -74,9 +74,9 @@ public class ZkConfListView extends ListView<ZkConf> {
         this.connectTrigger = () -> {
             final ZkConf selectedItem = getSelectionModel().getSelectedItem();
             ProgressDialog progressDialog = new ProgressDialog(selectedItem + "  连接中...", selectedItem,
-                                                               new Consumer<ZkClient>() {
+                                                               new Consumer<MyZkClient>() {
                                                                    @Override
-                                                                   public void accept(ZkClient zkClient) {
+                                                                   public void accept(MyZkClient zkClient) {
                                                                        ZkTab tab = new ZkTab(selectedItem);
                                                                        connectTabPane.getScene()
                                                                                      .getStylesheets()

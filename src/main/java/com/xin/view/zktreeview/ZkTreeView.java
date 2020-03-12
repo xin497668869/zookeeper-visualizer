@@ -120,7 +120,7 @@ public class ZkTreeView extends TreeView<ZkNode> {
      */
     private ZkNodeTreeItem initRootItem() {
         ZkNode root = new ZkNode("/", "/");
-        ZkNodeTreeItem rootZkNodeTreeItem = new ZkNodeTreeItem(zkClientWrap, root);
+        ZkNodeTreeItem rootZkNodeTreeItem = new ZkNodeTreeItem(zkClientWrap, root, this);
         setRoot(rootZkNodeTreeItem);
         root.setTreeItem(rootZkNodeTreeItem);
         rootZkNodeTreeItem.setExpanded(true);

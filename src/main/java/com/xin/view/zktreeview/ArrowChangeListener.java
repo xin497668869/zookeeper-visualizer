@@ -48,9 +48,11 @@ public class ArrowChangeListener implements ChangeListener<Boolean>, IZkChildLis
     @Override
     public void handleChildChange(String parentPath, List<String> currentChilds) {
         //这个没有子节点, 可能是删除自己了
-        if(currentChilds== null) {
-            return ;
+        if (currentChilds == null) {
+            return;
         }
-        Platform.runLater(() -> zkNodeTreeItem.refreshByParent(currentChilds));
+        Platform.runLater(() -> {
+            zkNodeTreeItem.refreshByParent(currentChilds);
+        });
     }
 }

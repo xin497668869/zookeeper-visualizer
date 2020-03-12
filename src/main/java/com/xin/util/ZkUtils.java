@@ -1,7 +1,7 @@
 package com.xin.util;
 
 import com.xin.ZkConfService.ZkConf;
-import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.MyZkClient;
 import org.I0Itec.zkclient.exception.ZkMarshallingError;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
 
@@ -15,8 +15,8 @@ public class ZkUtils {
     public static void init() {
     }
 
-    public static ZkClient getConnection(ZkConf zkConf) {
-        ZkClient zkClient = new ZkClient(zkConf.getAddress(), 5000, 5000, new ZkSerializer() {
+    public static MyZkClient getConnection(ZkConf zkConf) {
+        MyZkClient zkClient = new MyZkClient(zkConf.getAddress(), 5000, 5000, new ZkSerializer() {
             @Override
             public byte[] serialize(Object data) throws ZkMarshallingError {
                 if (data == null) {
