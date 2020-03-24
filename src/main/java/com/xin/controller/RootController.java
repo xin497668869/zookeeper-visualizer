@@ -75,10 +75,6 @@ public class RootController implements Initializable {
         Platform.exit();
     }
 
-    public void newConnBtnAction() {
-        ZkConfService.createSaveUi(null, zkConfListView);
-    }
-
     public void openLogFiles(ActionEvent actionEvent) {
         File file = new File("logs/zookeeper-visualizer.log");
         try {
@@ -103,6 +99,10 @@ public class RootController implements Initializable {
         } catch (Exception e) {
             log.error("打开issues失败", e);
         }
+    }
+
+    public void addNewConnect(ActionEvent actionEvent) {
+        ZkConfService.createSaveUi(null, zkConfListView);
     }
 
     private void installConfSearchFilter() {
