@@ -16,6 +16,8 @@ import org.I0Itec.zkclient.MyZkClient;
 
 import java.util.function.Consumer;
 
+import static javafx.scene.input.MouseButton.PRIMARY;
+
 /**
  * test
  *
@@ -27,7 +29,7 @@ public class ZkConfListView extends ListView<ZkConf> {
     private Runnable connectTrigger;
 
     public ZkConfListView() {
-
+        setContextMenu(getCreateContextMenu());
         setCellFactory(new Callback<ListView<ZkConf>, ListCell<ZkConf>>() {
             @Override
             public ListCell<ZkConf> call(ListView<ZkConf> param) {
@@ -46,28 +48,11 @@ public class ZkConfListView extends ListView<ZkConf> {
                             setContextMenu(getRightContextMenu());
                             setText(item.toString());
                             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
-                        } else {
-                            setText("");
-                            setContextMenu(getCreateContextMenu());
-                            addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
                         }
-
                     }
                 };
             }
         });
-    }
-
-    private ContextMenu getCreateContextMenu() {
-        MenuItem menuItem1 = new MenuItem("新增连接");
-        menuItem1.setOnAction(event -> {
-            ZkConfService.createSaveUi(null, this);
-        });
-
-        ContextMenu cm = new ContextMenu();
-        cm.getItems()
-          .add(menuItem1);
-        return cm;
     }
 
     public void installConnectTrigger(TabPane connectTabPane) {
@@ -96,12 +81,26 @@ public class ZkConfListView extends ListView<ZkConf> {
         };
 
         setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getClickCount() == 2) {
-                if (connectTrigger != null) {
-                    connectTrigger.run();
-                }
+            if (!PRIMARY.equals(mouseEvent.getButton()) || mouseEvent.getClickCount() != 2) {
+                return;
             }
+            if (getSelectionModel().getSelectedItem() == null) {
+                return;
+            }
+            connectTrigger.run();
         });
+    }
+
+    private ContextMenu getCreateContextMenu() {
+        MenuItem menuItem1 = new MenuItem("新增连接");
+        menuItem1.setOnAction(event -> {
+            ZkConfService.createSaveUi(null, this);
+        });
+
+        ContextMenu cm = new ContextMenu();
+        cm.getItems()
+          .add(menuItem1);
+        return cm;
     }
 
     private ContextMenu getRightContextMenu() {

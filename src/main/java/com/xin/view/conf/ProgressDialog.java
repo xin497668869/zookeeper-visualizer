@@ -27,8 +27,8 @@
 package com.xin.view.conf;
 
 import com.xin.ZkConfService.ZkConf;
-import com.xin.view.AlertTemplate;
 import com.xin.view.ZkConnectionTask;
+import com.xin.view.ZkExceptionDialog;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -138,8 +138,7 @@ public class ProgressDialog extends Dialog<Boolean> {
                         return;
                     case FAILED:
                         end();
-                        AlertTemplate.showTipAlert(false, "", "连接失败！\n " + zkConnectionTask.getException()
-                                                                                           .getMessage());
+                        new ZkExceptionDialog("连接失败！\n ", zkConnectionTask.getException()).showUi();
                         log.warn("连接异常", zkConnectionTask.getException());
                         return;
                     case SUCCEEDED:
