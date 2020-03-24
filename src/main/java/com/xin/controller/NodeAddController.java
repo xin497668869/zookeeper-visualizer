@@ -1,6 +1,5 @@
 package com.xin.controller;
 
-import com.xin.util.AlertUtils;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,12 +21,12 @@ import java.util.ResourceBundle;
  * @since 1.0
  */
 public class NodeAddController implements Initializable {
-    public Label       parentPathLabel;
+    public Label parentPathLabel;
     public RadioButton persistentRadioButton;
     public RadioButton ephemeralRadioButton;
-    public TextArea    nodeValueTextArea;
-    public TextField   nodeNameTextArea;
-    public Button      okButton;
+    public TextArea nodeValueTextArea;
+    public TextField nodeNameTextArea;
+    public Button okButton;
     public RadioButton persistentSequentialRadioButton;
     public RadioButton ephemeralSequentialRadioButton;
 
@@ -55,16 +54,18 @@ public class NodeAddController implements Initializable {
         } else if (ephemeralSequentialRadioButton.isSelected()) {
             return CreateMode.EPHEMERAL_SEQUENTIAL;
         } else {
-            AlertUtils.showErrorAlert("还没选择节点类型","准备删除节点 ");
-            return null;
+            return CreateMode.PERSISTENT;
         }
     }
 
     public void mouseClickedToCreateNode(MouseEvent mouseEvent) {
         if (getZkNodeTypeEnum() != null) {
             String parentPath = parentPathLabel.getText();
-            okButton.getScene().setUserData(new NodeAddConf(parentPath + nodeNameTextArea.getText(), nodeValueTextArea.getText(), getZkNodeTypeEnum()));
-            Stage window = (Stage) okButton.getScene().getWindow();
+            okButton.getScene()
+                    .setUserData(
+                            new NodeAddConf(parentPath + nodeNameTextArea.getText(), nodeValueTextArea.getText(), getZkNodeTypeEnum()));
+            Stage window = (Stage) okButton.getScene()
+                                           .getWindow();
             window.close();
         }
     }
@@ -73,8 +74,8 @@ public class NodeAddController implements Initializable {
     @AllArgsConstructor
     public static class NodeAddConf {
 
-        private String     path;
-        private String     value;
+        private String path;
+        private String value;
         private CreateMode zkNodeType;
 
     }

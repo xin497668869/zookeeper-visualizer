@@ -1,6 +1,7 @@
 package com.xin;
 
 import com.xin.util.AlertUtils;
+import com.xin.view.ZkExceptionDialog;
 import com.xin.view.zktreeview.ArrowChangeListener;
 import javafx.application.Platform;
 import lombok.Getter;
@@ -37,8 +38,8 @@ public class ZkClientWrap {
         try {
             zkClient.unsubscribeDataChanges(path, listener);
         } catch (Exception e) {
-            AlertUtils.showErrorAlert("取消监听节点数据变化信息异常", e.getMessage());
-            log.error("zkClient执行异常", e);
+            log.error("取消监听节点数据变化信息异常", e);
+            new ZkExceptionDialog("取消监听节点数据变化信息异常", e).showUi();
         }
     }
 
@@ -46,8 +47,9 @@ public class ZkClientWrap {
         try {
             zkClient.subscribeDataChanges(path, listener);
         } catch (Exception e) {
-            AlertUtils.showErrorAlert("新增监听节点数据变化信息异常", e.getMessage());
-            log.error("zkClient执行异常", e);
+            new ZkExceptionDialog("新增监听节点数据变化信息异常", e).showUi();
+            log.error("新增监听节点数据变化信息异常", e);
+
         }
     }
 
@@ -55,8 +57,8 @@ public class ZkClientWrap {
         try {
             return zkClient.readData(nodePath, stat);
         } catch (Exception e) {
-            AlertUtils.showErrorAlert("读取节点数据异常", e.getMessage());
-            log.error("zkClient执行异常", e);
+            new ZkExceptionDialog("读取节点数据异常", e).showUi();
+            log.error("读取节点数据异常", e);
         }
         return "";
     }
@@ -67,17 +69,22 @@ public class ZkClientWrap {
         } catch (ZkNodeExistsException e) {
             AlertUtils.showErrorAlert("创建节点异常, 节点已存在", e.getMessage());
             log.error("创建节点异常, 节点已存在", e);
+            new ZkExceptionDialog("读取节点数据异常", e).showUi();
         } catch (IllegalArgumentException e) {
             AlertUtils.showErrorAlert("创建节点异常", e.getMessage());
             log.error("创建节点异常", e);
+            new ZkExceptionDialog("读取节点数据异常", e).showUi();
         } catch (ZkInterruptedException e) {
             AlertUtils.showErrorAlert("创建节点异常, 操作被打断", e.getMessage());
             log.error("创建节点异常, 操作被打断", e);
+            new ZkExceptionDialog("读取节点数据异常", e).showUi();
         } catch (Exception e) {
             if (e.getCause() instanceof KeeperException.NoChildrenForEphemeralsException) {
                 AlertUtils.showErrorAlert("创建节点异常, 临时节点不能有子节点", e.getMessage());
+                new ZkExceptionDialog("读取节点数据异常", e).showUi();
             } else {
                 AlertUtils.showErrorAlert("创建节点异常", e.getMessage());
+                new ZkExceptionDialog("读取节点数据异常", e).showUi();
             }
 
             log.error("zkClient执行异常", e);
@@ -90,6 +97,7 @@ public class ZkClientWrap {
         } catch (Exception e) {
             AlertUtils.showErrorAlert("删除节点异常", e.getMessage());
             log.error("zkClient执行异常", e);
+            new ZkExceptionDialog("读取节点数据异常", e).showUi();
         }
         return false;
     }

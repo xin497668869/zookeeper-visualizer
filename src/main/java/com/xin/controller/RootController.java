@@ -1,9 +1,9 @@
 package com.xin.controller;
 
 import com.xin.ZkConfService;
-import com.xin.util.AlertUtils;
 import com.xin.util.FuzzyMatchUtils;
 import com.xin.util.StringUtil;
+import com.xin.view.ZkExceptionDialog;
 import com.xin.view.conf.SearchFilterObservalbeList;
 import com.xin.view.conf.ZkConfListView;
 import javafx.application.Platform;
@@ -64,7 +64,9 @@ public class RootController implements Initializable {
             installConfSearchFilter();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("初始化异常", e);
+            new ZkExceptionDialog("初始化异常", e)
+                    .showUi();
         }
 
     }
@@ -88,8 +90,8 @@ public class RootController implements Initializable {
                 Desktop.getDesktop()
                        .open(file.getParentFile());
             } catch (Exception ex) {
-                AlertUtils.showErrorAlert("打开日志失败 ", "日志目录" + file.getPath() + " error" + e.toString());
                 log.error("打开日志目录异常", ex);
+                new ZkExceptionDialog("打开日志目录异常 日志目录:" + file.getPath(), e).showUi();
             }
         }
     }
