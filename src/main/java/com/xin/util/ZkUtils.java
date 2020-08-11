@@ -16,23 +16,25 @@ public class ZkUtils {
     }
 
     public static MyZkClient getConnection(ZkConf zkConf) {
-        MyZkClient zkClient = new MyZkClient(zkConf.getAddress(), 5000, 5000, new ZkSerializer() {
-            @Override
-            public byte[] serialize(Object data) throws ZkMarshallingError {
-                if (data == null) {
-                    return new byte[]{};
-                } else if (data instanceof String) {
-                    return ((String) data).getBytes();
-                } else {
-                    throw new RuntimeException("不支持的序列化类型 " + data.getClass());
-                }
-            }
+        return new MyZkClient(zkConf.getAddress(),
+                              zkConf.getSessionTimeout(),
+                              zkConf.getConnectTimeout(),
+                              new ZkSerializer() {
+                                  @Override
+                                  public byte[] serialize(Object data) throws ZkMarshallingError {
+                                      if (data == null) {
+                                          return new byte[]{};
+                                      } else if (data instanceof String) {
+                                          return ((String) data).getBytes();
+                                      } else {
+                                          throw new RuntimeException("不支持的序列化类型 " + data.getClass());
+                                      }
+                                  }
 
-            @Override
-            public Object deserialize(byte[] bytes) throws ZkMarshallingError {
-                return new String(bytes, StandardCharsets.UTF_8);
-            }
-        }, 1000);
-        return zkClient;
+                                  @Override
+                                  public Object deserialize(byte[] bytes) throws ZkMarshallingError {
+                                      return new String(bytes, StandardCharsets.UTF_8);
+                                  }
+                              }, 1000);
     }
 }

@@ -5,7 +5,10 @@
 <?import com.xin.view.zktreeview.ZkTreeView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
@@ -20,8 +23,20 @@
         <SplitPane fx:id="splitPane" dividerPositions="0.3064312736443884" prefHeight="160.0" prefWidth="200.0">
             <BorderPane>
                 <top>
-                    <SearchTextField fx:id="searchZkNodeTextField" promptText="Search" BorderPane.alignment="CENTER">
-                    </SearchTextField>
+                    <HBox>
+                        <SearchTextField fx:id="searchZkNodeTextField" promptText="Search" BorderPane.alignment="CENTER">
+                        </SearchTextField>
+                        <MenuBar>
+                            <Menu text="选项">
+                                <Menu text="排序">
+                                    <CheckMenuItem text="默认" fx:id="defaultSortCheckItem" selected="true"/>
+                                    <CheckMenuItem text="按字符" fx:id="stringSortCheckItem"></CheckMenuItem>
+                                    <CheckMenuItem text="按时间" fx:id="timeSortCheckItem"></CheckMenuItem>
+                                </Menu>
+                            </Menu>
+                        </MenuBar>
+                    </HBox>
+
                 </top>
                 <center>
                     <ZkTreeView fx:id="zkTreeView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>

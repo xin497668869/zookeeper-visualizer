@@ -29,7 +29,7 @@ public class ZkConfListView extends ListView<ZkConf> {
     private Runnable connectTrigger;
 
     public ZkConfListView() {
-        setContextMenu(getCreateContextMenu());
+
         setCellFactory(new Callback<ListView<ZkConf>, ListCell<ZkConf>>() {
             @Override
             public ListCell<ZkConf> call(ListView<ZkConf> param) {
@@ -48,6 +48,9 @@ public class ZkConfListView extends ListView<ZkConf> {
                             setContextMenu(getRightContextMenu());
                             setText(item.toString());
                             removeEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventEventHandler);
+                        } else {
+                            setText("");
+                            setContextMenu(getCreateContextMenu());
                         }
                     }
                 };

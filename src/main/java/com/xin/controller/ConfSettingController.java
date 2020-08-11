@@ -26,23 +26,33 @@ public class ConfSettingController implements Initializable {
 
     public TextField nameTextField;
     public TextField addressTextField;
+    public TextField connectTimeout;
+    public TextField sessionTimeout;
+
     public BorderPane root;
     public Button createConfButton;
     public Button testConnectButton;
     public Text testResultMsg;
-    private ZkConf zkConf;
     private ZkConfListView zkConfListView;
+    private String currentZkConfId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
+    public ZkConf getCurrentUiZkConf() {
+        return new ZkConf(currentZkConfId,
+                          nameTextField.getText(),
+                          addressTextField.getText(),
+                          Integer.valueOf(sessionTimeout.getText()),
+                          Integer.valueOf(connectTimeout.getText()));
+    }
+
     public void onClickToCreateConf(MouseEvent mouseEvent) {
-        zkConf.setAddress(addressTextField.getText());
-        zkConf.setName(nameTextField.getText());
+
         ZkConfService.getService()
-                     .saveZkConf(zkConf, zkConfListView);
+                     .saveZkConf(getCurrentUiZkConf(), zkConfListView);
         Stage window = (Stage) createConfButton.getScene()
                                                .getWindow();
         window.close();
@@ -56,12 +66,15 @@ public class ConfSettingController implements Initializable {
         new Thread(() -> {
             MyZkClient zkClient = null;
             try {
-                zkClient = new MyZkClient(addressTextField.getText(), 5000, 5000);
+                ZkConf zkConf = getCurrentUiZkConf();
+                zkClient = new MyZkClient(zkConf.getAddress(),
+                                          zkConf.getSessionTimeout(),
+                                          zkConf.getConnectTimeout());
                 Platform.runLater(() -> testResultMsg.setText("连接成功！"));
             } catch (Exception e) {
                 log.warn("连接异常", e);
                 Platform.runLater(() -> {
-                    testResultMsg.setText("连接失败！" + e.toString());
+                    testResultMsg.setText("连接失败！\n" + e.getMessage());
 
                 });
             } finally {
@@ -77,20 +90,25 @@ public class ConfSettingController implements Initializable {
 
     public void init(ZkConfListView zkConfListView) {
         this.zkConfListView = zkConfListView;
-        this.zkConf = new ZkConf();
-        this.zkConf.setAddress("localhost:2181");
-        initComponent();
+        currentZkConfId = null;
+        initComponent(new ZkConf(null,
+                                 "",
+                                 "localhost:2181",
+                                 5000,
+                                 5000));
     }
 
     public void init(ZkConf zkConf, ZkConfListView zkConfListView) {
         this.zkConfListView = zkConfListView;
-        this.zkConf = zkConf;
-        initComponent();
+        currentZkConfId = zkConf.getId();
+        initComponent(zkConf);
     }
 
-    private void initComponent() {
+    private void initComponent(ZkConf zkConf) {
         this.nameTextField.setText(zkConf.getName());
+        this.connectTimeout.setText(String.valueOf(zkConf.getConnectTimeout()));
+        this.sessionTimeout.setText(String.valueOf(zkConf.getSessionTimeout()));
         this.addressTextField.setText(zkConf.getAddress());
-
+        this.connectTimeout.setText(String.valueOf(zkConf.getConnectTimeout()));
     }
 }

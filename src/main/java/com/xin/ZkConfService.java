@@ -73,8 +73,10 @@ public class ZkConfService {
         zkConfs.remove(zkConf);
         saveInFile();
         confListView.getItems()
-                    .removeIf(conf2 -> conf2.getId()
-                                            .equals(zkConf.getId()));
+                    .removeIf(conf2 -> {
+                        return conf2.getId()
+                                    .equals(zkConf.getId());
+                    });
         confListView.refresh();
     }
 
@@ -84,6 +86,14 @@ public class ZkConfService {
             if (file.exists()) {
                 String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 zkConfs = JSON.parseArray(content, ZkConf.class);
+                for (ZkConf zkConf : zkConfs) {
+                    if (zkConf.getConnectTimeout() == null) {
+                        zkConf.setConnectTimeout(5000);
+                    }
+                    if (zkConf.getSessionTimeout() == null) {
+                        zkConf.setSessionTimeout(5000);
+                    }
+                }
             } else {
                 zkConfs = new ArrayList<>();
             }
@@ -105,13 +115,18 @@ public class ZkConfService {
     public static class ZkConf implements Serializable {
         private String id;
         private String name;
+        private Integer connectTimeout;
+        private Integer sessionTimeout;
         private String address;
 
         public ZkConf() {
-            this(null, "", "");
         }
 
-        public ZkConf(String id, String name, String address) {
+        public ZkConf(String id,
+                      String name,
+                      String address,
+                      Integer connectTimeout,
+                      Integer sessionTimeout) {
             if (id == null || id.isEmpty()) {
                 this.id = UUID.randomUUID()
                               .toString()
@@ -121,11 +136,15 @@ public class ZkConfService {
             }
             this.name = name;
             this.address = address;
+            this.connectTimeout = connectTimeout;
+            this.sessionTimeout = sessionTimeout;
         }
 
         public void updateConf(ZkConf zkConf) {
             name = zkConf.name;
             address = zkConf.address;
+            this.connectTimeout = zkConf.connectTimeout;
+            this.sessionTimeout = zkConf.sessionTimeout;
         }
 
         @Override
