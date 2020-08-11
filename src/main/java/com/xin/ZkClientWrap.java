@@ -1,5 +1,6 @@
 package com.xin;
 
+import com.xin.ZkConfService.ZkConf;
 import com.xin.util.AlertUtils;
 import com.xin.view.ZkExceptionDialog;
 import com.xin.view.zktreeview.ArrowChangeListener;
@@ -28,10 +29,13 @@ import java.util.concurrent.Executors;
 public class ZkClientWrap {
     @Getter
     private final MyZkClient zkClient;
+    @Getter
+    private ZkConf zkConf;
     private ExecutorService async = Executors.newFixedThreadPool(2);
 
-    public ZkClientWrap(MyZkClient zkClient) {
+    public ZkClientWrap(MyZkClient zkClient, ZkConf zkConf) {
         this.zkClient = zkClient;
+        this.zkConf = zkConf;
     }
 
     public synchronized void unsubscribeDataChanges(String path, IZkDataListener listener) {

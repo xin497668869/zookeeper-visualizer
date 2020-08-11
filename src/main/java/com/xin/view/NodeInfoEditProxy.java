@@ -2,6 +2,8 @@ package com.xin.view;
 
 import com.xin.ZkClientWrap;
 import com.xin.ZkNode;
+import com.xin.util.AlertUtils;
+import com.xin.util.CommandUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -13,6 +15,7 @@ import org.apache.zookeeper.data.Stat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author linxixin@cvte.com
@@ -26,6 +29,7 @@ public class NodeInfoEditProxy {
     private final Button reloadNodeValueButton;
     private final Button saveNodeValueButton;
     private final ZkClientWrap zkClientWrap;
+    private final List<Button> commandButtons;
     public ThreadLocal<SimpleDateFormat> simpleDateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     @Getter
     private TreeItem<ZkNode> currentTreeItem;
@@ -35,19 +39,35 @@ public class NodeInfoEditProxy {
                              TextField zkPathTextField,
                              TextArea zkNodeStatTextArea,
                              Button reloadNodeValueButton,
-                             Button saveNodeValueButton) {
+                             Button saveNodeValueButton,
+                             List<Button> commandButtons) {
         this.zkClientWrap = zkClientWrap;
         this.zkNodeDataTextArea = zkNodeDataTextArea;
         this.zkPathTextField = zkPathTextField;
         this.zkNodeStatTextArea = zkNodeStatTextArea;
         this.reloadNodeValueButton = reloadNodeValueButton;
         this.saveNodeValueButton = saveNodeValueButton;
+        this.commandButtons = commandButtons;
 //        this.zkPatDecodeTextField = zkPatDecodeTextField;
     }
 
     public void init() {
         installSaveDataAction(zkClientWrap);
         installReloadDataAction();
+        for (Button commandButton : commandButtons) {
+            commandButton.setOnAction(event -> {
+                String command = commandButton.getText()
+                                              .trim();
+                try {
+                    String result = CommandUtils.result(command, zkClientWrap.getZkConf());
+                    AlertUtils.showInfoAlert(command + " 结果", result);
+                } catch (Throwable e) {
+                    log.error("请求命令异常", e);
+                    new ZkExceptionDialog("请求命令异常", e).showUi();
+                }
+
+            });
+        }
     }
 
     public void updateDate(String nodePath) {

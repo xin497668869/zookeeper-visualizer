@@ -122,6 +122,10 @@ public class ZkConfService {
         public ZkConf() {
         }
 
+        public ZkConf copy() {
+            return new ZkConf(id, name, address, connectTimeout, sessionTimeout);
+        }
+
         public ZkConf(String id,
                       String name,
                       String address,

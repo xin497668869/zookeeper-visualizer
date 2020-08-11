@@ -34,7 +34,7 @@
     </top>
     <center>
         <SplitPane dividerPositions="0.2" focusTraversable="" nodeOrientation="LEFT_TO_RIGHT" prefHeight="549.0"
-                   prefWidth="1001.0">
+                   prefWidth="1005.0">
             <items>
                 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="300.0" minWidth="200.0" prefHeight="200.0"
                             prefWidth="200.0">

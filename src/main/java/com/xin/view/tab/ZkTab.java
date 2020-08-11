@@ -22,6 +22,7 @@ import org.apache.zookeeper.Watcher;
 import org.controlsfx.control.MaskerPane;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author linxixin@cvte.com
@@ -60,6 +61,16 @@ public class ZkTab extends Tab {
         Button reloadNodeValueButton = (Button) node1.lookup("#reloadNodeValueButton");
         Button saveNodeValueButton = (Button) node1.lookup("#saveNodeValueButton");
 
+        Button commandStatButton = (Button) node1.lookup("#commandStat");
+        Button commandRuokButton = (Button) node1.lookup("#commandRuok");
+//        Button commandDumpButton = (Button) node1.lookup("#commandDump");
+        Button commandSrvrButton = (Button) node1.lookup("#commandSrvr");
+        Button commandConfButton = (Button) node1.lookup("#commandConf");
+        Button commandEnviButton = (Button) node1.lookup("#commandEnvi");
+        Button commandReqsButton = (Button) node1.lookup("#commandReqs");
+        Button commandConsButton = (Button) node1.lookup("#commandCons");
+        Button commandWchcButton = (Button) node1.lookup("#commandWchc");
+        Button commandWchpButton = (Button) node1.lookup("#commandWchp");
         loadingMaskerPane.setVisible(false);
         loadingMaskerPane.setText(zkConf + " 连接异常, 重连中...");
         nodeInfoEditProxy = new NodeInfoEditProxy(zkClientWrap,
@@ -67,7 +78,17 @@ public class ZkTab extends Tab {
                                                   zkPathTextField,
                                                   zkNodeStatTextArea,
                                                   reloadNodeValueButton,
-                                                  saveNodeValueButton);
+                                                  saveNodeValueButton,
+                                                  Arrays.asList(commandStatButton,
+                                                                commandRuokButton,
+//                                                                commandDumpButton,
+                                                                commandSrvrButton,
+                                                                commandConfButton,
+                                                                commandEnviButton,
+                                                                commandReqsButton,
+                                                                commandConsButton,
+                                                                commandWchcButton,
+                                                                commandWchpButton));
         nodeInfoEditProxy.init();
     }
 

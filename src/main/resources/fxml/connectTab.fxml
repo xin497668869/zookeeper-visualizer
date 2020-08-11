@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import com.xin.view.zktreeview.SearchTextField?>
 <?import com.xin.view.zktreeview.ZkTreeView?>
 <?import javafx.geometry.Insets?>
@@ -16,11 +15,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<BorderPane prefHeight="380.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/9.0.1"
-            xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="380.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <center>
 
-        <SplitPane fx:id="splitPane" dividerPositions="0.3064312736443884" prefHeight="160.0" prefWidth="200.0">
+        <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0">
             <BorderPane>
                 <top>
                     <HBox>
@@ -43,12 +41,69 @@
                 </center>
             </BorderPane>
             <VBox prefHeight="200.0" prefWidth="100.0">
+                <HBox>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="51.0" BorderPane.alignment="CENTER">zk命令:</Label>
+                    <Button fx:id="commandStat" text=" stat ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandRuok" text=" ruok ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <!--                    <Button fx:id="commandDump" text=" dump ">-->
+                    <!--                        <HBox.margin>-->
+                    <!--                            <Insets left="5.0"/>-->
+                    <!--                        </HBox.margin>-->
+                    <!--                    </Button>-->
+                    <Button fx:id="commandSrvr" text=" srvr ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandConf" text=" conf ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandEnvi" text=" envi ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandReqs" text=" reqs ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandCons" text=" cons ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandWchc" text=" wchc ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="commandWchp" text=" wchp ">
+                        <HBox.margin>
+                            <Insets left="5.0"/>
+                        </HBox.margin>
+                    </Button>
+                </HBox>
                 <BorderPane>
                     <left>
                         <Label text=" path:   " BorderPane.alignment="CENTER"/>
                     </left>
                     <center>
-                        <TextField editable="false" fx:id="zkPathTextField"/>
+                        <TextField fx:id="zkPathTextField" editable="false">
+                            <BorderPane.margin>
+                                <Insets top="5.0"/>
+                            </BorderPane.margin>
+                        </TextField>
                     </center>
                 </BorderPane>
                 <!--                <BorderPane>-->
@@ -68,25 +123,21 @@
                         </Label>
                     </left>
                 </BorderPane>
-                <TextArea fx:id="zkNodeStatTextArea" styleClass="textAreaLikeLabel" editable="false"
-                          prefHeight="180.0" prefWidth="200.0" maxHeight="180.0" minHeight="180.0"
-                          text="" wrapText="true"/>
+                <TextArea fx:id="zkNodeStatTextArea" editable="false" maxHeight="180.0" minHeight="180.0" prefHeight="180.0" prefWidth="200.0" styleClass="textAreaLikeLabel" text="" wrapText="true"/>
                 <Separator prefHeight="78.0" prefWidth="516.0"/>
                 <Label text="value:"/>
-                <TextArea prefHeight="999999.0" fx:id="zkNodeDataTextArea"/>
+                <TextArea fx:id="zkNodeDataTextArea" prefHeight="999999.0"/>
                 <HBox>
-                        <Button fx:id="saveNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="85.0"
-                                text="保存修改">
-                            <HBox.margin>
-                                <Insets left="10.0" right="10.0"/>
-                            </HBox.margin>
-                        </Button>
-                        <Button fx:id="reloadNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="87.0"
-                                text="重新读取">
-                            <HBox.margin>
-                                <Insets left="10.0" right="10.0"/>
-                            </HBox.margin>
-                        </Button>
+                    <Button fx:id="saveNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="85.0" text="保存修改">
+                        <HBox.margin>
+                            <Insets left="10.0" right="10.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="reloadNodeValueButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="87.0" text="重新读取">
+                        <HBox.margin>
+                            <Insets left="10.0" right="10.0"/>
+                        </HBox.margin>
+                    </Button>
                     <padding>
                         <Insets bottom="5.0" top="5.0"/>
                     </padding>

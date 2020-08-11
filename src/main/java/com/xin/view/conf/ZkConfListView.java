@@ -70,7 +70,7 @@ public class ZkConfListView extends ListView<ZkConf> {
                                                                                      .getStylesheets()
                                                                                      .add(getClass().getResource("/css/style.css")
                                                                                                     .toExternalForm());
-                                                                       tab.init(new ZkClientWrap(zkClient));
+                                                                       tab.init(new ZkClientWrap(zkClient, selectedItem.copy()));
                                                                        tab.setClosable(true);
                                                                        connectTabPane.setTabClosingPolicy(
                                                                                TabPane.TabClosingPolicy.SELECTED_TAB);
