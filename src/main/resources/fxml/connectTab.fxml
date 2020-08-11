@@ -18,7 +18,7 @@
 <BorderPane prefHeight="380.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <center>
 
-        <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0">
+        <SplitPane fx:id="splitPane" dividerPositions="0.3064312736443884" prefHeight="160.0" prefWidth="200.0">
             <BorderPane>
                 <top>
                     <HBox>
