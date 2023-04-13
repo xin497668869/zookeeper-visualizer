@@ -9,8 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FuzzyMatchUtils {
 
+
     public static boolean match(String name, String keyword) {
-        return match(name, keyword.toLowerCase(), 0, 0);
+        return match(name.toLowerCase(), keyword.toLowerCase(), 0, 0);
     }
 
     private static boolean match(String name, String keyword, int nameIndex, int keywordIndex) {
