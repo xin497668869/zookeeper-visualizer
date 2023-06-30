@@ -9,11 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 @Slf4j

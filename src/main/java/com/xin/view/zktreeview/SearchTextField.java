@@ -17,7 +17,7 @@ import org.controlsfx.validation.Validator;
 import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class SearchTextField extends CustomTextField {

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.MyZkClient;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 @Slf4j

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.HyperlinkLabel;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 @Slf4j

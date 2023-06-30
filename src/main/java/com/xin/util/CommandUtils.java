@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class CommandUtils {

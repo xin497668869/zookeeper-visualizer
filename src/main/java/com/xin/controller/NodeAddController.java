@@ -1,12 +1,7 @@
 package com.xin.controller;
 
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import lombok.AllArgsConstructor;
@@ -17,7 +12,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class NodeAddController implements Initializable {

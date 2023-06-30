@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.io.IOException;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class FXMLDialog<T> {

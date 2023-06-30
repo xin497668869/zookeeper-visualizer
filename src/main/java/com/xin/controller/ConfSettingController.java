@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 @Slf4j

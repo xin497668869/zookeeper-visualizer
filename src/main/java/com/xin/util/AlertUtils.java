@@ -6,7 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 /**
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class AlertUtils {

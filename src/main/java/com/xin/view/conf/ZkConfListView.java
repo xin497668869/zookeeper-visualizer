@@ -5,11 +5,7 @@ import com.xin.ZkConfService;
 import com.xin.ZkConfService.ZkConf;
 import com.xin.view.tab.ZkTab;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import org.I0Itec.zkclient.MyZkClient;
@@ -21,7 +17,7 @@ import static javafx.scene.input.MouseButton.PRIMARY;
 /**
  * test
  *
- * @author linxixin@cvte.com
+ * @author 497668869@qq.com
  * @since 1.0
  */
 public class ZkConfListView extends ListView<ZkConf> {
